@@ -34,6 +34,7 @@ class Program
         
         using StreamWriter sw = File.AppendText(fileName);
         DateTimeOffset currentDate = DateTimeOffset.Now;
-        sw.WriteLine("placeholderName,\"" + args[0] + "\"," + currentDate.ToUnixTimeSeconds());
+        string username = Environment.UserName;
+        sw.WriteLine(username + ",\"" + args[0] + "\"," + currentDate.ToUnixTimeSeconds());
     }
 }
