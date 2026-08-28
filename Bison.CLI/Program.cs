@@ -6,11 +6,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        if (args[0] == "read" || args[0] == "Read")
+
+        if (args[0].ToLower() == "read")
+
         {
             read();
         }
-        else if (args[0] == "observe" || args[0] == "Observe")
+        else if (args[0].ToLower() == "observe")
         {
             observe(args);
         }
