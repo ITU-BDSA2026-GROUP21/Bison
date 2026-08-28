@@ -23,7 +23,7 @@ class Program
                 string[] data = line.Split(",");
                 long seconds = long.Parse(data[2]);
                 DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
-                Console.WriteLine(data[0] + " @ " + date + ": " + data[1]);
+                Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
 
             }
         }
