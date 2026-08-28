@@ -31,5 +31,9 @@ class Program
         {
             Console.WriteLine(e.Message);
         }
+        
+        using StreamWriter sw = File.AppendText(fileName);
+        DateTimeOffset currentDate = DateTimeOffset.Now;
+        sw.WriteLine("placeholderName,\"" + args[0] + "\"," + currentDate.ToUnixTimeSeconds());
     }
 }
