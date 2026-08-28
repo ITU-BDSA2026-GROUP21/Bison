@@ -6,43 +6,54 @@ class Program
 {
     static void Main(string[] args)
     {
-        string fileName = @"bison_observe_cli_db.csv";
         if (args[0] == "read" || args[0] == "Read")
         {
-            try
-            {
-                using StreamReader reader = new (fileName);
-                
-                //Skip first line
-                reader.ReadLine(); 
-
-                while (reader.Peek() >= 0)
-                {
-                    //Need to check if there exists a line first
-
-                    string line = reader.ReadLine();
-                    string[] data = line.Split(",");
-                    long seconds = long.Parse(data[2]);
-                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
-                    Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
-
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            read();
         }
         else if (args[0] == "observe" || args[0] == "Observe")
         {
-            using StreamWriter sw = File.AppendText(fileName);
-            DateTimeOffset currentDate = DateTimeOffset.Now;
-            string username = Environment.UserName;
-            sw.WriteLine(username + ",\"" + args[1] + "\"," + currentDate.ToUnixTimeSeconds());
+            observe(args);
         }
         else
         {
             Console.WriteLine("Did not input --read or --observe");
         }
     }
+
+    static void read()
+    {
+        try
+        {
+            using StreamReader reader = new (@"bison_observe_cli_db.csv");
+            
+            //Skip first line
+            reader.ReadLine(); 
+
+            while (reader.Peek() >= 0)
+            {
+                //Need to check if there exists a line first
+
+                string line = reader.ReadLine();
+                string[] data = line.Split(",");
+                long seconds = long.Parse(data[2]);
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
+                Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
+
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    static void observe(string[] args)
+    {
+        using StreamWriter sw = File.AppendText(@"bison_observe_cli_db.csv");
+        DateTimeOffset currentDate = DateTimeOffset.Now;
+        string username = Environment.UserName;
+        sw.WriteLine(username + ",\"" + args[1] + "\"," + currentDate.ToUnixTimeSeconds());
+    }
+
 }
+
