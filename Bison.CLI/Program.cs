@@ -7,7 +7,7 @@ class Program
     static void Main(string[] args)
     {
         string fileName = @"bison_observe_cli_db.csv";
-        if (args[0] == "read" || args[0] == "Read")
+        if (args[0].ToLower() == "read")
         {
             try
             {
@@ -33,7 +33,7 @@ class Program
                 Console.WriteLine(e.Message);
             }
         }
-        else if (args[0] == "observe" || args[0] == "Observe")
+        else if (args[0].ToLower() == "observe")
         {
             using StreamWriter sw = File.AppendText(fileName);
             DateTimeOffset currentDate = DateTimeOffset.Now;
