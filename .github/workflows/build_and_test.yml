@@ -1,10 +1,10 @@
 name: .NET Build and Test
-
+run-name: ${{ github.actor }} has pushed or made a pull request, and building and testing has triggered
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ main ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ main ]
 
 jobs:
   build:
