@@ -45,7 +45,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("StreamReader error" + e.Message);
         }
     }
 
