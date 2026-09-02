@@ -1,16 +1,25 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 class Program
 {
     static void Main(string[] args)
     {
 
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            NewLine = Environment.NewLine,
+        };
+
         if (args[0].ToLower() == "read")
 
         {
-            read();
+            read(config);
         }
         else if (args[0].ToLower() == "observe")
         {
@@ -22,14 +31,24 @@ class Program
         }
     }
 
-    static void read()
+    static void read(CsvConfiguration config)
     {
         try
         {
             using StreamReader reader = new (@"bison_observe_cli_db.csv");
-            
+            using (var csv = new CsvReader(reader, config))
+            {
+                var records = csv.GetRecords<ObservationRecord>();
+
+                foreach(ObservationRecord obs in records)
+                {
+                    Console.WriteLine(obs.Author);
+                    Console.WriteLine(obs.Observation);
+                    Console.WriteLine(obs.Timestamp);
+                }
+            }
             //Skip first line
-            reader.ReadLine(); 
+            /*reader.ReadLine(); 
 
             while (reader.Peek() >= 0)
             {
@@ -41,7 +60,7 @@ class Program
                 DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
                 Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
 
-            }
+            }*/
         }
         catch (Exception e)
         {
