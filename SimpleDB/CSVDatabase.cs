@@ -7,6 +7,11 @@ using CsvHelper.Configuration;
 sealed public class CSVDatabase<T> : IDatabaseRepository<T>
 {
     private readonly string filePath;
+    CsvConfiguration config = new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        HasHeaderRecord = true,
+        NewLine = Environment.NewLine,
+    };
 
     public CSVDatabase(string filePath)
     {
@@ -14,11 +19,6 @@ sealed public class CSVDatabase<T> : IDatabaseRepository<T>
     }
     public IEnumerable<T> Read(int? limit = null)
     {
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HasHeaderRecord = true,
-            NewLine = Environment.NewLine,
-        };
 
         try
         {
@@ -39,6 +39,11 @@ sealed public class CSVDatabase<T> : IDatabaseRepository<T>
 
     public void Store(T record)
     {
-        
+        using StreamWriter sw = File.AppendText(filePath);
+        using (var csv = new CsvWriter(sw, config))
+        {
+            csv.WriteRecord(record);
+            csv.NextRecord();
+        }
     }
 }
