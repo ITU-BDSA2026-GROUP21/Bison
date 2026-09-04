@@ -15,7 +15,7 @@ class Program
     Bison.
     
     Usage:
-        bison read
+        bison run --read
         bison observe <text>
         bison (-h | --help)
 
@@ -34,18 +34,19 @@ class Program
             NewLine = Environment.NewLine,
         };
 
-        if (arguments["read"].asBoolean)
+        if (arguments["--read"].IsTrue)
 
         {
             read(config);
         }
-        else if (args[0].ToLower() == "observe")
+        else if (arguments["<text>"].IsString)
         {
-            observe(args, config);
+            String input = arguments["<text>"].ToString();
+            observe(input, config);
         }
         else
         {
-            Console.WriteLine("Did not input --read or --observe");
+            Console.WriteLine("Did not input run --read or observe <text>");
         }
     }
 
@@ -67,14 +68,14 @@ class Program
         }
     }
 
-    static void observe(string[] args, CsvConfiguration config)
+    static void observe(String input, CsvConfiguration config)
     {
         using StreamWriter sw = File.AppendText(@"bison_observe_cli_db.csv");
         using (var csv = new CsvWriter(sw, config))
         {
             var records = new List<ObservationRecord>
             {
-                new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() }
+                new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() }
             };
             csv.WriteRecords(records);
     
