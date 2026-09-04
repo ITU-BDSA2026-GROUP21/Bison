@@ -13,6 +13,7 @@ class Program
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
+            HasHeaderRecord = true,
             NewLine = Environment.NewLine,
         };
 
@@ -36,31 +37,16 @@ class Program
         try
         {
             using StreamReader reader = new (@"bison_observe_cli_db.csv");
-            using (var csv = new CsvReader(reader, config))
+            using (var csv = new CsvReader(reader, config)) 
             {
                 var records = csv.GetRecords<ObservationRecord>();
 
                 foreach(ObservationRecord obs in records)
                 {
-                    Console.WriteLine(obs.Author);
-                    Console.WriteLine(obs.Observation);
-                    Console.WriteLine(obs.Timestamp);
+                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(obs.Timestamp));
+                    Console.WriteLine(obs.Author + " @ " +  date.ToString("MM/dd/yy HH:mm:ss")  + ": " + obs.Observation);
                 }
             }
-            //Skip first line
-            /*reader.ReadLine(); 
-
-            while (reader.Peek() >= 0)
-            {
-                //Need to check if there exists a line first
-
-                string line = reader.ReadLine();
-                string[] data = line.Split(",");
-                long seconds = long.Parse(data[2]);
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
-                Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
-
-            }*/
         }
         catch (Exception e)
         {
@@ -75,6 +61,5 @@ class Program
         string username = Environment.UserName;
         sw.WriteLine(username + ",\"" + args[1] + "\"," + currentDate.ToUnixTimeSeconds());
     }
-
 }
 

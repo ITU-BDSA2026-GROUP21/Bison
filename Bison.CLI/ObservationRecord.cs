@@ -1,6 +1,6 @@
-public class ObservationRecord
+public record ObservationRecord
 {
-    public string Author {get; set;}
-    public string Observation {get; set;}
-    public long Timestamp {get; set;}
+    public required string Author {get; set;}
+    public required string Observation {get; set;}
+    public required long Timestamp {get; set;}
 }
