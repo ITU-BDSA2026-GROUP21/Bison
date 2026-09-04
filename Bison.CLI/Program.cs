@@ -5,11 +5,28 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
+using DocoptNet;
 
 class Program
 {
+
+    
+    const string usage = @"
+    Bison.
+    
+    Usage:
+        bison read
+        bison observe <text>
+        bison (-h | --help)
+
+    Options:
+        -h --help   Show this help message
+    ";
+
     static void Main(string[] args)
     {
+
+        var arguments = new Docopt().Apply(usage, args, exit: true);
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -17,7 +34,7 @@ class Program
             NewLine = Environment.NewLine,
         };
 
-        if (args[0].ToLower() == "read")
+        if (arguments["read"].asBoolean)
 
         {
             read(config);
