@@ -32,13 +32,8 @@ class Program
     {
         var records = database.Read();
 
-                UserInterface.PrintObservations(records);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("StreamReader error" + e.Message);
-        }
+        UserInterface.PrintObservations(records);
+
     }
 
     static void observe(string[] args, CsvConfiguration config)
