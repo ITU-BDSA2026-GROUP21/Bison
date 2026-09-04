@@ -1,3 +1,5 @@
+namespace SimpleDB;
+
 public record ObservationRecord
 {
     public required string Author {get; set;}

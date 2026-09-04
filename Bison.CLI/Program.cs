@@ -6,6 +6,7 @@ using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DocoptNet;
+using SimpleDB;
 
 class Program
 {
@@ -36,8 +37,11 @@ class Program
 
         if (arguments["--read"].IsTrue)
 
+        IDatabaseRepository<ObservationRecord> database = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
+
+        if (args[0].ToLower() == "read")
         {
-            read(config);
+            read(database);
         }
         else if (arguments["<text>"].IsString)
         {
@@ -47,25 +51,20 @@ class Program
         else
         {
             Console.WriteLine("Did not input run --read or observe <text>");
+            observe(database, args);
+        }
+        else
+        {
+            Console.WriteLine("Did not input '-- read' or '-- observe'");
         }
     }
 
-    static void read(CsvConfiguration config)
+    static void read(IDatabaseRepository<ObservationRecord> database)
     {
-        try
-        {
-            using StreamReader reader = new (@"bison_observe_cli_db.csv");
-            using (var csv = new CsvReader(reader, config)) 
-            {
-                var records = csv.GetRecords<ObservationRecord>();
+        var records = database.Read();
 
-                UserInterface.PrintObservations(records);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("StreamReader error" + e.Message);
-        }
+        UserInterface.PrintObservations(records);
+
     }
 
     static void observe(String input, CsvConfiguration config)
@@ -80,6 +79,11 @@ class Program
             csv.WriteRecords(records);
     
         }
+    static void observe(IDatabaseRepository<ObservationRecord> database, string[] args)
+    {
+
+        database.Store(new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() });
+        
     }
 }
 

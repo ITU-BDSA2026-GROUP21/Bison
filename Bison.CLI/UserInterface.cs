@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using SimpleDB;
 public static class UserInterface
 {
     public static void PrintObservations(IEnumerable<ObservationRecord> obs)
