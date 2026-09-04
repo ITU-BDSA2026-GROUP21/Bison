@@ -41,11 +41,7 @@ class Program
             {
                 var records = csv.GetRecords<ObservationRecord>();
 
-                foreach(ObservationRecord obs in records)
-                {
-                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(obs.Timestamp));
-                    Console.WriteLine(obs.Author + " @ " +  date.ToString("MM/dd/yy HH:mm:ss")  + ": " + obs.Observation);
-                }
+                UserInterface.PrintObservations(records);
             }
         }
         catch (Exception e)
