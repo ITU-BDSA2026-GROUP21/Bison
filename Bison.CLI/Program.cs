@@ -24,7 +24,7 @@ class Program
         }
         else
         {
-            Console.WriteLine("Did not input --read or --observe");
+            Console.WriteLine("Did not input '-- read' or '-- observe'");
         }
     }
 
