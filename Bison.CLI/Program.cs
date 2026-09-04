@@ -13,7 +13,7 @@ class Program
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = true,
+            HasHeaderRecord = false,
             NewLine = Environment.NewLine,
         };
 
@@ -24,7 +24,7 @@ class Program
         }
         else if (args[0].ToLower() == "observe")
         {
-            observe(args);
+            observe(args, config);
         }
         else
         {
@@ -54,12 +54,18 @@ class Program
         }
     }
 
-    static void observe(string[] args)
+    static void observe(string[] args, CsvConfiguration config)
     {
         using StreamWriter sw = File.AppendText(@"bison_observe_cli_db.csv");
-        DateTimeOffset currentDate = DateTimeOffset.Now;
-        string username = Environment.UserName;
-        sw.WriteLine(username + ",\"" + args[1] + "\"," + currentDate.ToUnixTimeSeconds());
+        using (var csv = new CsvWriter(sw, config))
+        {
+            var records = new List<ObservationRecord>
+            {
+                new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() }
+            };
+            csv.WriteRecords(records);
+    
+        }
     }
 }
 
