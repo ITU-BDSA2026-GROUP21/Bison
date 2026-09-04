@@ -1,16 +1,26 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 class Program
 {
     static void Main(string[] args)
     {
 
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            NewLine = Environment.NewLine,
+        };
+
         if (args[0].ToLower() == "read")
 
         {
-            read();
+            read(config);
         }
         else if (args[0].ToLower() == "observe")
         {
@@ -22,25 +32,20 @@ class Program
         }
     }
 
-    static void read()
+    static void read(CsvConfiguration config)
     {
         try
         {
             using StreamReader reader = new (@"bison_observe_cli_db.csv");
-            
-            //Skip first line
-            reader.ReadLine(); 
-
-            while (reader.Peek() >= 0)
+            using (var csv = new CsvReader(reader, config)) 
             {
-                //Need to check if there exists a line first
+                var records = csv.GetRecords<ObservationRecord>();
 
-                string line = reader.ReadLine();
-                string[] data = line.Split(",");
-                long seconds = long.Parse(data[2]);
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(seconds);
-                Console.WriteLine(data[0] + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + data[1]);
-
+                foreach(ObservationRecord obs in records)
+                {
+                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(obs.Timestamp));
+                    Console.WriteLine(obs.Author + " @ " +  date.ToString("MM/dd/yy HH:mm:ss")  + ": " + obs.Observation);
+                }
             }
         }
         catch (Exception e)
@@ -56,6 +61,5 @@ class Program
         string username = Environment.UserName;
         sw.WriteLine(username + ",\"" + args[1] + "\"," + currentDate.ToUnixTimeSeconds());
     }
-
 }
 
