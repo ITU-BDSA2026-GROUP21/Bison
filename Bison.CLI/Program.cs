@@ -20,7 +20,7 @@ class Program
         }
         else if (args[0].ToLower() == "observe")
         {
-            observe(args, config);
+            observe(database, args);
         }
         else
         {
@@ -36,18 +36,11 @@ class Program
 
     }
 
-    static void observe(string[] args, CsvConfiguration config)
+    static void observe(IDatabaseRepository<ObservationRecord> database, string[] args)
     {
-        using StreamWriter sw = File.AppendText(@"bison_observe_cli_db.csv");
-        using (var csv = new CsvWriter(sw, config))
-        {
-            var records = new List<ObservationRecord>
-            {
-                new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() }
-            };
-            csv.WriteRecords(records);
-    
-        }
+
+        database.Store(new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() });
+        
     }
 }
 
