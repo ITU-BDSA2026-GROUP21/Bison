@@ -10,7 +10,6 @@ using SimpleDB;
 
 class Program
 {
-
     
     const string usage = @"
     Bison.
@@ -29,40 +28,25 @@ class Program
 
         IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
         IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../data/bison_comment_cli_db.csv");
+
         var arguments = new Docopt().Apply(usage, args, exit: true);
 
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HasHeaderRecord = false,
-            NewLine = Environment.NewLine,
-        };
-
         if (arguments["--read"].IsTrue)
-
-        IDatabaseRepository<ObservationRecord> database = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
-
-        if (args[0].ToLower() == "read")
         {
             read(observationDatabase);
         }
         else if (arguments["<text>"].IsString)
         {
-            observe(observationDatabase, args);
-        }
-        else if (args[0].ToLower() == "comment")
-        {
-            comment(observationDatabase, commentDatabase, args);
             String input = arguments["<text>"].ToString();
-            observe(input, config);
+            observe(observationDatabase, input);
         }
+        /* else if (arguments["--comment"].IsTrue)
+        {
+            comment(observationDatabase, commentDatabase, input); //TODO: ADD DOCOPT OPTION TO COMMENT
+        } */
         else
         {
             Console.WriteLine("Did not input run --read or observe <text>");
-            observe(database, args);
-        }
-        else
-        {
-            Console.WriteLine("Did not input '-- read' or '-- observe'");
         }
     }
 
@@ -74,32 +58,19 @@ class Program
 
     }
 
-    static void observe(IDatabaseRepository<ObservationRecord> observationDB, string[] args)
-    static void observe(String input, CsvConfiguration config)
-    {
-        using StreamWriter sw = File.AppendText(@"bison_observe_cli_db.csv");
-        using (var csv = new CsvWriter(sw, config))
-        {
-            var records = new List<ObservationRecord>
-            {
-                new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() }
-            };
-            csv.WriteRecords(records);
-    
-        }
-    static void observe(IDatabaseRepository<ObservationRecord> database, string[] args)
+    static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input)
     {
         var records = observationDB.Read();
         ObservationRecord last = records.Last();
 
-        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = args[1], Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = last.ID++ });
+        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = last.ID++ });
         
     }
 
-    static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, string[] args)
+    //TODO: FIX DOCOPT COMMENT OPTION
+    /* static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, string input)
     {
-        int argID = Int32.Parse(args[2]);
-        var records = commentDB.Read();
+        int argID = Int32.Parse(input);
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
         {
@@ -110,6 +81,6 @@ class Program
             }
         }
         Console.WriteLine("ID: " + argID + " does not exist!");
-    }
+    }*/
 }
 
