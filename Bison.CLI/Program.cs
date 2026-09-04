@@ -5,22 +5,18 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
+using SimpleDB;
 
 class Program
 {
     static void Main(string[] args)
     {
 
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HasHeaderRecord = false,
-            NewLine = Environment.NewLine,
-        };
+        IDatabaseRepository<ObservationRecord> database = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
 
         if (args[0].ToLower() == "read")
-
         {
-            read(config);
+            read(database);
         }
         else if (args[0].ToLower() == "observe")
         {
@@ -32,14 +28,9 @@ class Program
         }
     }
 
-    static void read(CsvConfiguration config)
+    static void read(IDatabaseRepository<ObservationRecord> database)
     {
-        try
-        {
-            using StreamReader reader = new (@"bison_observe_cli_db.csv");
-            using (var csv = new CsvReader(reader, config)) 
-            {
-                var records = csv.GetRecords<ObservationRecord>();
+        var records = database.Read();
 
                 UserInterface.PrintObservations(records);
             }
