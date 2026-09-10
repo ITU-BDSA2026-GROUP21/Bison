@@ -1,4 +1,4 @@
-name: Project Management
+name: Project Management - Pull Requests
 
 on:
   pull_request:
