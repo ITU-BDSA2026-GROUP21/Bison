@@ -7,47 +7,48 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using DocoptNet;
 using SimpleDB;
+using System.CommandLine;
+using System.ComponentModel;
 
 class Program
 {
-    
-    const string usage = @"
-    Bison.
-    
-    Usage:
-        bison run --read
-        bison observe <text>
-        bison (-h | --help)
-
-    Options:
-        -h --help   Show this help message
-    ";
-
     static void Main(string[] args)
     {
+        RootCommand rootCommand = new("Bison program app");
 
         IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
         IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../data/bison_comment_cli_db.csv");
 
-        var arguments = new Docopt().Apply(usage, args, exit: true);
 
-        if (arguments["--read"].IsTrue)
+        Command readCommand = new("read", "Read from the database");
+
+        Command obeserveCommand = new Command("observe", "Add a new observation to the database");
+
+        rootCommand.Add(readCommand);
+        rootCommand.Add(obeserveCommand);
+
+
+
+        readCommand.SetAction(parseResult =>
         {
             read(observationDatabase);
-        }
-        else if (arguments["<text>"].IsString)
+        });
+
+        Argument<String> observation = new Argument<String>("observation")
         {
-            String input = arguments["<text>"].ToString();
+            Description = "The observation you want to add"
+        };
+
+        obeserveCommand.Arguments.Add(observation);
+
+        obeserveCommand.SetAction(parseResult =>
+        {
+            string input = parseResult.GetValue(observation);
             observe(observationDatabase, input);
-        }
-        /* else if (arguments["--comment"].IsTrue)
-        {
-            comment(observationDatabase, commentDatabase, input); //TODO: ADD DOCOPT OPTION TO COMMENT
-        } */
-        else
-        {
-            Console.WriteLine("Did not input run --read or observe <text>");
-        }
+        });
+
+        ParseResult parseResult = rootCommand.Parse(args);
+        parseResult.Invoke();
     }
 
     static void read(IDatabaseRepository<ObservationRecord> observationDB)
