@@ -14,25 +14,26 @@ class Program
 {
     static void Main(string[] args)
     {
-        RootCommand rootCommand = new("Bison program app");
+        RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
         IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
         IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../data/bison_comment_cli_db.csv");
 
 
-        Command readCommand = new("read", "Read from the database");
-
+        Command readCommand = new Command("read", "Read from the database");
         Command obeserveCommand = new Command("observe", "Add a new observation to the database");
+        Command commentCommand = new Command("comment", "Add a comment to an observation");
 
         rootCommand.Add(readCommand);
         rootCommand.Add(obeserveCommand);
-
+        rootCommand.Add(commentCommand);
 
 
         readCommand.SetAction(parseResult =>
         {
             read(observationDatabase);
         });
+
 
         Argument<String> observation = new Argument<String>("observation")
         {
@@ -46,6 +47,28 @@ class Program
             string input = parseResult.GetValue(observation);
             observe(observationDatabase, input);
         });
+
+
+        Argument<int> id = new Argument<int>("commentID")
+        {
+            Description = "The ID of the observation you want to comment on"
+        };
+
+        Argument<String> commentText = new Argument<String>("comment")
+        {
+            Description = "The comment you want to the observation"
+        };
+
+        commentCommand.Arguments.Add(id);
+        commentCommand.Arguments.Add(commentText);
+
+        commentCommand.SetAction(parseResult =>
+        {
+            int commentID = parseResult.GetValue(id);
+            string commentArg = parseResult.GetValue(commentText);
+            comment(observationDatabase, commentDatabase, commentID, commentArg);
+        });
+
 
         ParseResult parseResult = rootCommand.Parse(args);
         parseResult.Invoke();
@@ -68,20 +91,18 @@ class Program
         
     }
 
-    //TODO: FIX DOCOPT COMMENT OPTION
-    /* static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, string input)
+    static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
     {
-        int argID = Int32.Parse(input);
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
         {
             if (obs.ID == argID)
             {
-                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = args[1], Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID});
+                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID});
                 return;
             }
         }
         Console.WriteLine("ID: " + argID + " does not exist!");
-    }*/
+    }
 }
 
