@@ -1,0 +1,76 @@
+name: Release Bison
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore Bison.sln
+
+    - name: Build
+      run: dotnet build Bison.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test Bison.sln --configuration Release --no-build --verbosity normal
+    
+    - name: Publish Windows
+      run: |
+        dotnet publish src/Bison.CLI/Bison.CLI.csproj \
+          --configuration Release \
+          --runtime win-x64 \
+          --self-contained false \
+          --property:PublishSingleFile=true \
+          --output ./publish/win-x64
+
+    - name: Publish Linux
+      run: |
+        dotnet publish src/Bison.CLI/Bison.CLI.csproj \
+          --configuration Release \
+          --runtime linux-x64 \
+          --self-contained false \
+          --property:PublishSingleFile=true \
+          --output ./publish/linux-x64
+
+    - name: Publish macOS
+      run: |
+        dotnet publish src/Bison.CLI/Bison.CLI.csproj \
+          --configuration Release \
+          --runtime osx-x64 \
+          --self-contained false \
+          --property:PublishSingleFile=true \
+          --output ./publish/osx-x64
+    
+    - name: Zip Windows
+      run: zip -j Bison-Windows-x64.zip ./publish/win-x64/*
+
+    - name: Zip Linux
+      run: zip -j Bison-Linux-x64.zip ./publish/linux-x64/*
+
+    - name: Zip macOS
+      run: zip -j Bison-macOS-x64.zip ./publish/osx-x64/*
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v3
+      with:
+        files: |
+          Bison-Windows-x64.zip
+          Bison-Linux-x64.zip
+          Bison-macOS-x64.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
