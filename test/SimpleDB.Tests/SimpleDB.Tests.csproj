@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\SimpleDB\SimpleDB.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../testdata/**/*"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
 </Project>

@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\Bison.CLI\Bison.CLI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../testdata/**/*"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
