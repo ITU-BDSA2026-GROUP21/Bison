@@ -15,9 +15,8 @@ class Program
     {
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
-        IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../../data/bison_observe_cli_db.csv");
-        IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../../data/bison_comment_cli_db.csv");
-
+        IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance("../../data/bison_observe_cli_db.csv");
+        IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance("../../data/bison_comment_cli_db.csv");
 
         Command readCommand = new("read", "Read from the database");
         Command obeserveCommand = new("observe", "Add a new observation to the database");
