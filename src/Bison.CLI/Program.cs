@@ -22,7 +22,7 @@ class Program
         Command readCommand = new("read", "Read from the database");
         Command obeserveCommand = new("observe", "Add a new observation to the database");
         Command commentCommand = new("comment", "Add a comment to an observation");
-        Command discusionCommand = new("discussion", "Read comments from an observation");
+        Command discusionCommand = new("discussion", "Read comment(s) from an observation");
 
         rootCommand.Add(readCommand);
         rootCommand.Add(obeserveCommand);
@@ -70,9 +70,10 @@ class Program
             comment(observationDatabase, commentDatabase, commentID, commentArg);
         });
 
+
         Argument<int> discusionID = new("discussionID")
         {
-            Description = "The ID of the observation you want to comment from"
+            Description = "The ID of the observation you want to read comments from"
         };
 
         discusionCommand.Arguments.Add(discusionID);
