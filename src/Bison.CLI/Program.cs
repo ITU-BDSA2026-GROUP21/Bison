@@ -15,8 +15,8 @@ class Program
     {
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
-        IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../data/bison_observe_cli_db.csv");
-        IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../data/bison_comment_cli_db.csv");
+        IDatabaseRepository<ObservationRecord> observationDatabase = new CSVDatabase<ObservationRecord>("../../data/bison_observe_cli_db.csv");
+        IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../../data/bison_comment_cli_db.csv");
 
 
         Command readCommand = new("read", "Read from the database");
@@ -87,7 +87,7 @@ class Program
         ObservationRecord last = records.Last();
 
         observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID });
-        
+
     }
 
     static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
@@ -97,7 +97,7 @@ class Program
         {
             if (obs.ID == argID)
             {
-                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID});
+                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID });
                 return;
             }
         }
