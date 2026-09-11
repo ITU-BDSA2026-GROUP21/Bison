@@ -30,10 +30,18 @@ public static class UserInterface
 
         obeserveCommand.Arguments.Add(observation);
 
+        Argument<String> location = new("location")
+        {
+            Description = "The location of your observation"
+        };
+
+        obeserveCommand.Arguments.Add(location);
+
         obeserveCommand.SetAction(parseResult =>
         {
             string input = parseResult.GetValue(observation);
-            observe(observations, input);
+            string locationArg = parseResult.GetValue(location);
+            observe(observations, input, locationArg);
         });
 
 
@@ -83,53 +91,67 @@ public static class UserInterface
 
     }
 
-    static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input)
+    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input, string location)
     {
         var records = observationDB.Read();
         ObservationRecord last = records.Last();
 
-        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID });
+        observationDB.Store(new ObservationRecord
+        {
+            Author = Environment.UserName,
+            Observation = input,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ID = ++last.ID,
+            Location = location
+        });
 
     }
 
-    static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
+    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
+    int argID, string input)
     {
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
         {
             if (obs.ID == argID)
             {
-                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID });
+                commentDB.Store(new CommentRecord
+                {
+                    Author = Environment.UserName,
+                    Comment = input,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    ObservationID = argID
+                });
                 return;
             }
         }
         Console.WriteLine("ID: " + argID + " does not exist!");
     }
 
-    static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB, int observationID)
+    public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,
+    int observationID)
     {
         var commentRecords = commentDB.Read();
         var observationRecords = observationDB.Read();
         PrintComments(commentRecords, observationRecords, observationID);
     }
 
-
     public static void PrintObservations(IEnumerable<ObservationRecord> obs)
     {
         foreach (ObservationRecord o in obs)
         {
-            DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp));
-            Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
+            DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+            Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
         }
     }
- public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
+    public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
     {
 
         foreach (ObservationRecord o in obs)
         {
-            if(o.ID == ID)
+            if (o.ID == ID)
             {
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp));
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
                 Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
             }
         }
@@ -137,8 +159,8 @@ public static class UserInterface
         foreach (CommentRecord r in com)
         {
             if (r.ObservationID == ID)
-            { 
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp));
+            {
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp)).ToLocalTime();
                 Console.WriteLine("– " + r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
             }
         }
