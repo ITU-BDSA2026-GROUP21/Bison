@@ -48,7 +48,7 @@ public class BisonTests
         string output = writer.ToString();
 
         // Assert
-        Assert.Equal("ropf @ 08-01-23 12:09:20: A bird at DR Byen\r\n", output);
+        Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen\r\n", output);
     }
 
     [Fact]
