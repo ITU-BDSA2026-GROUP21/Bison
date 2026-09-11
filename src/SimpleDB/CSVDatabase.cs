@@ -7,23 +7,33 @@ using CsvHelper.Configuration;
 sealed public class CSVDatabase<T> : IDatabaseRepository<T>
 {
     private readonly string filePath;
+    private static CSVDatabase<T>? instance;
     CsvConfiguration config = new CsvConfiguration(CultureInfo.InvariantCulture)
     {
         HasHeaderRecord = true,
         NewLine = Environment.NewLine,
     };
 
-    public CSVDatabase(string filePath)
+    private CSVDatabase(string filePath)
     {
         this.filePath = filePath;
+    }
+
+    public static CSVDatabase<T> getInstance(string filePath)
+    {
+        if (instance == null)
+        {
+            instance = new CSVDatabase<T>(filePath);
+        }
+        return instance;
     }
     public IEnumerable<T> Read(int? limit = null)
     {
 
         try
         {
-            using StreamReader reader = new (filePath);
-            using (var csv = new CsvReader(reader, config)) 
+            using StreamReader reader = new(filePath);
+            using (var csv = new CsvReader(reader, config))
             {
                 var records = csv.GetRecords<T>().ToList();
 
