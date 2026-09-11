@@ -83,7 +83,7 @@ public static class UserInterface
 
     }
 
-    static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input)
+    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input)
     {
         var records = observationDB.Read();
         ObservationRecord last = records.Last();
@@ -92,7 +92,7 @@ public static class UserInterface
 
     }
 
-    static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
+    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
     {
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
@@ -103,7 +103,8 @@ public static class UserInterface
                 return;
             }
         }
-        Console.WriteLine("ID: " + argID + " does not exist!");
+
+        throw new ArgumentException("ID: " + argID + " does not exist!");
     }
 
     static void discussion(IDatabaseRepository<CommentRecord> commentDB, int observationID)
@@ -122,6 +123,7 @@ public static class UserInterface
             Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
         }
     }
+
     public static void PrintComments(IEnumerable<CommentRecord> com, int ID)
     {
         foreach (CommentRecord r in com)
