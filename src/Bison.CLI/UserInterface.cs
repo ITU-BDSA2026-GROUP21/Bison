@@ -17,10 +17,10 @@ public static class UserInterface
         rootCommand.Add(commentCommand);
         rootCommand.Add(discusionCommand);
 
-        Option<String?> readLocation = new("Optional:location")
+        Argument<String?> readLocation = new("optional:location")
         {
             Description = "Optional string for sorting observations by location",
-            DefaultValueFactory = _ => null
+            DefaultValueFactory = _ => ""
         };
 
         readCommand.Add(readLocation);
@@ -38,13 +38,12 @@ public static class UserInterface
             Description = "The observation you want to add"
         };
 
-        obeserveCommand.Arguments.Add(observation);
-
         Argument<String> location = new("location")
         {
             Description = "The location of your observation"
         };
 
+        obeserveCommand.Arguments.Add(observation);
         obeserveCommand.Arguments.Add(location);
 
         obeserveCommand.SetAction(parseResult =>
@@ -74,6 +73,7 @@ public static class UserInterface
             string commentArg = parseResult.GetValue(commentText);
             comment(observations, comments, commentID, commentArg);
         });
+
 
         Argument<int> discusionID = new("discussionID")
         {
@@ -149,14 +149,14 @@ public static class UserInterface
     {
         foreach (ObservationRecord o in obs)
         {
-            if (location == null)
+            if (location == "")
             {
                 DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
                 Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
             }
             else
             {
-                if (o.Location.ToLower().Equals(location))
+                if (o.Location.ToLower().StartsWith(location))
                 {
                     DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
                     Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
