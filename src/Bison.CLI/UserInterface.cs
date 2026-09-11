@@ -1,13 +1,9 @@
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using SimpleDB;
 using System.CommandLine;
 public static class UserInterface
 {
-    
-    public static void run(String[] args,IDatabaseRepository<ObservationRecord> observations, IDatabaseRepository<CommentRecord> comments)
+
+    public static void run(String[] args, IDatabaseRepository<ObservationRecord> observations, IDatabaseRepository<CommentRecord> comments)
     {
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
@@ -78,7 +74,7 @@ public static class UserInterface
         ParseResult parseResult = rootCommand.Parse(args);
         parseResult.Invoke();
 
-    }   
+    }
     public static void read(IDatabaseRepository<ObservationRecord> observationDB)
     {
         var records = observationDB.Read();
@@ -96,7 +92,7 @@ public static class UserInterface
 
     }
 
-       static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
+    static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
     {
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
@@ -110,7 +106,7 @@ public static class UserInterface
         Console.WriteLine("ID: " + argID + " does not exist!");
     }
 
-      static void discussion(IDatabaseRepository<CommentRecord> commentDB, int observationID)
+    static void discussion(IDatabaseRepository<CommentRecord> commentDB, int observationID)
     {
         var commentRecords = commentDB.Read();
 
@@ -126,7 +122,6 @@ public static class UserInterface
             Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
         }
     }
-
     public static void PrintComments(IEnumerable<CommentRecord> com, int ID)
     {
         foreach (CommentRecord r in com)
