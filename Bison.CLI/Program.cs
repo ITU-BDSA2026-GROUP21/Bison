@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
-using DocoptNet;
 using SimpleDB;
 using System.CommandLine;
 using System.ComponentModel;
@@ -20,9 +19,9 @@ class Program
         IDatabaseRepository<CommentRecord> commentDatabase = new CSVDatabase<CommentRecord>("../data/bison_comment_cli_db.csv");
 
 
-        Command readCommand = new Command("read", "Read from the database");
-        Command obeserveCommand = new Command("observe", "Add a new observation to the database");
-        Command commentCommand = new Command("comment", "Add a comment to an observation");
+        Command readCommand = new("read", "Read from the database");
+        Command obeserveCommand = new("observe", "Add a new observation to the database");
+        Command commentCommand = new("comment", "Add a comment to an observation");
 
         rootCommand.Add(readCommand);
         rootCommand.Add(obeserveCommand);
@@ -35,7 +34,7 @@ class Program
         });
 
 
-        Argument<String> observation = new Argument<String>("observation")
+        Argument<String> observation = new("observation")
         {
             Description = "The observation you want to add"
         };
@@ -49,12 +48,12 @@ class Program
         });
 
 
-        Argument<int> id = new Argument<int>("commentID")
+        Argument<int> id = new("commentID")
         {
             Description = "The ID of the observation you want to comment on"
         };
 
-        Argument<String> commentText = new Argument<String>("comment")
+        Argument<String> commentText = new("comment")
         {
             Description = "The comment you want to the observation"
         };
@@ -87,7 +86,7 @@ class Program
         var records = observationDB.Read();
         ObservationRecord last = records.Last();
 
-        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = last.ID++ });
+        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID });
         
     }
 
