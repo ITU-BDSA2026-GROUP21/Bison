@@ -67,7 +67,7 @@ public static class UserInterface
         discusionCommand.SetAction(ParseResult =>
         {
             int ID = ParseResult.GetValue(discusionID);
-            discussion(comments, ID);
+            discussion(comments, observations, ID);
         });
 
 
@@ -106,11 +106,11 @@ public static class UserInterface
         Console.WriteLine("ID: " + argID + " does not exist!");
     }
 
-    static void discussion(IDatabaseRepository<CommentRecord> commentDB, int observationID)
+    static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB, int observationID)
     {
         var commentRecords = commentDB.Read();
-
-        PrintComments(commentRecords, observationID);
+        var observationRecords = observationDB.Read();
+        PrintComments(commentRecords, observationRecords, observationID);
     }
 
 
@@ -122,14 +122,24 @@ public static class UserInterface
             Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
         }
     }
-    public static void PrintComments(IEnumerable<CommentRecord> com, int ID)
+ public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
     {
+
+        foreach (ObservationRecord o in obs)
+        {
+            if(o.ID == ID)
+            {
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp));
+                Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
+            }
+        }
+
         foreach (CommentRecord r in com)
         {
             if (r.ObservationID == ID)
-            {
+            { 
                 DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp));
-                Console.WriteLine(r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
+                Console.WriteLine("– " + r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
             }
         }
     }
