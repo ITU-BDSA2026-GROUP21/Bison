@@ -17,10 +17,20 @@ public static class UserInterface
         rootCommand.Add(commentCommand);
         rootCommand.Add(discusionCommand);
 
+        Option<String?> readLocation = new("Optional:location")
+        {
+            Description = "Optional string for sorting observations by location",
+            DefaultValueFactory = _ => null
+        };
+
+        readCommand.Add(readLocation);
+
         readCommand.SetAction(parseResult =>
         {
-            read(observations);
+            string input = parseResult.GetValue(readLocation).ToLower();
+            read(observations, input);
         });
+
 
 
         Argument<String> observation = new("observation")
@@ -83,11 +93,10 @@ public static class UserInterface
         parseResult.Invoke();
 
     }
-    public static void read(IDatabaseRepository<ObservationRecord> observationDB)
+    public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
     {
         var records = observationDB.Read();
-
-        PrintObservations(records);
+        PrintObservations(records, readLocation);
 
     }
 
@@ -136,14 +145,26 @@ public static class UserInterface
         PrintComments(commentRecords, observationRecords, observationID);
     }
 
-    public static void PrintObservations(IEnumerable<ObservationRecord> obs)
+    public static void PrintObservations(IEnumerable<ObservationRecord> obs, string? location)
     {
         foreach (ObservationRecord o in obs)
         {
-            DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
-            Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+            if (location == null)
+            {
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+                Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+            }
+            else
+            {
+                if (o.Location.ToLower().Equals(location))
+                {
+                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+                    Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+                }
+            }
         }
     }
+
     public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
     {
 
