@@ -22,10 +22,12 @@ class Program
         Command readCommand = new("read", "Read from the database");
         Command obeserveCommand = new("observe", "Add a new observation to the database");
         Command commentCommand = new("comment", "Add a comment to an observation");
+        Command discusionCommand = new("discussion", "Read comments from an observation");
 
         rootCommand.Add(readCommand);
         rootCommand.Add(obeserveCommand);
         rootCommand.Add(commentCommand);
+        rootCommand.Add(discusionCommand);
 
 
         readCommand.SetAction(parseResult =>
@@ -68,6 +70,19 @@ class Program
             comment(observationDatabase, commentDatabase, commentID, commentArg);
         });
 
+        Argument<int> discusionID = new("discussionID")
+        {
+            Description = "The ID of the observation you want to comment from"
+        };
+
+        discusionCommand.Arguments.Add(discusionID);
+
+        discusionCommand.SetAction(ParseResult =>
+        {
+            int ID = ParseResult.GetValue(discusionID);
+            discussion(commentDatabase, ID);
+        });
+
 
         ParseResult parseResult = rootCommand.Parse(args);
         parseResult.Invoke();
@@ -102,6 +117,13 @@ class Program
             }
         }
         Console.WriteLine("ID: " + argID + " does not exist!");
+    }
+
+    static void discussion(IDatabaseRepository<CommentRecord> commentDB, int observationID)
+    {
+        var commentRecords = commentDB.Read();
+
+        UserInterface.PrintComments(commentRecords, observationID);
     }
 }
 
