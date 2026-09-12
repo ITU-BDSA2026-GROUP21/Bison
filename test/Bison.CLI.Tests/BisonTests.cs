@@ -2,9 +2,9 @@ using SimpleDB;
 
 namespace Bison.CLI.Tests;
 
+// It may be necessary later to tell xUnit to not run these tests in parallel, because of Console.SetOut()
 public class BisonTests
 {
-
     string observationPath = Path.Combine(AppContext.BaseDirectory, "bison_observe_cli_db_test.csv");
 
     string commentPath = Path.Combine(AppContext.BaseDirectory, "bison_comment_cli_db_test.csv");
@@ -37,69 +37,96 @@ public class BisonTests
     [Fact]
     public void ObservationPrinting()
     {
-        // Arrange
-        CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
+        var originalOut = Console.Out;
         using var writer = new StringWriter();
-        Console.SetOut(writer);
+        try
+        {
+            // Arrange
+            CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
+            Console.SetOut(writer);
 
-        // Act
-        UserInterface.PrintObservations(observationDatabase.Read(1));
+            // Act
+            UserInterface.PrintObservations(observationDatabase.Read(1));
 
-        string output = writer.ToString();
+            string output = writer.ToString();
 
-        // Assert
-        Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
+            // Assert
+            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
     }
 
     [Fact]
     public void CommentPrinting()
     {
-        // Arrange
+        var originalOut = Console.Out;
+        using var writer = new StringWriter();
+        try
+        {
+            // Arrange
+            CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
+            CSVDatabase<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
+            Console.SetOut(writer);
 
+            // Act
+            UserInterface.PrintComments(commentDatabase.Read(), observationDatabase.Read(), 0);
 
-        // Act
+            string output = writer.ToString();
 
-        // Assert
+            // Assert
+            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine +
+                         "- raap @ 08/01/23 12:09:20: A bird indeed" + Environment.NewLine, output);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
     }
 
 
-    // Below here may be useful for integration tests
-    /*
-        public CSVDatabase<ObservationRecord> CreateTestObservationDatabase()
+    [Fact]
+    public void EndToEndRead()
+    {
+        var originalOut = Console.Out;
+        using var writer = new StringWriter();
+        try
         {
-            //Copy base CSV, and create temporary test database and CSV file
+            IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
+            IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
 
-            CSVDatabase<ObservationRecord> old = new CSVDatabase<ObservationRecord>("../../testdata/bison_observe_cli_db_test.csv");
+            string[] args = ["read"];
 
-            File.Create("../../testdata/test.csv");
+            Console.SetOut(writer);
 
+            UserInterface.run(args, observationDatabase, commentDatabase);
 
+            string output = writer.ToString();
 
-            //Return new Database
+            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
         }
-
-        public CSVDatabase<ObservationRecord> CreateTestCommentDatabase()
+        finally
         {
-            //Copy base CSV, and create temporary test database and CSV file
-
-            //Return new Database
+            Console.SetOut(originalOut);
         }
+    }
 
-        public void DeleteCSV(string filePath1)
-        {
-            try
-            {
-                // Try to delete CSV
-            }
-            catch
-            {
-                // Catch exception, then continue
-            }
-        }
+    [Fact]
+    public void EndToEndObserve()
+    {
+        IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
+        IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
 
-        public void Dispose()
-        {
-            DeleteCSV("../../testdata/test.csv");
-            DeleteCSV("../../testdata/test2.csv");
-        }*/
+        string[] args = ["observe", "Penguin"];
+
+        ObservationRecord last = observationDatabase.Read().Last();
+        ObservationRecord expected = new ObservationRecord { Author = Environment.UserName, Observation = "Penguin", Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID };
+
+        UserInterface.run(args, observationDatabase, commentDatabase);
+
+        var actual = observationDatabase.Read().Last();
+        Assert.Equal(expected.ToString(), actual.ToString());
+    }
 }
