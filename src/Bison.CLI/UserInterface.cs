@@ -119,28 +119,25 @@ public static class UserInterface
     {
         foreach (ObservationRecord o in obs)
         {
-            DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp));
-            Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
+            Console.WriteLine(o);
         }
     }
- public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
+    public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
     {
 
         foreach (ObservationRecord o in obs)
         {
-            if(o.ID == ID)
+            if (o.ID == ID)
             {
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp));
-                Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
+                Console.WriteLine(o);
             }
         }
 
         foreach (CommentRecord r in com)
         {
             if (r.ObservationID == ID)
-            { 
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp));
-                Console.WriteLine("– " + r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
+            {
+                Console.WriteLine("– " + r);
             }
         }
     }
