@@ -46,12 +46,12 @@ public class BisonTests
             Console.SetOut(writer);
 
             // Act
-            UserInterface.PrintObservations(observationDatabase.Read(1));
+            UserInterface.PrintObservations(observationDatabase.Read(1), "DR Byen");
 
             string output = writer.ToString();
 
             // Assert
-            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
+            Assert.Equal("Location: DR Byen" + Environment.NewLine + "ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
         }
         finally
         {
@@ -77,7 +77,8 @@ public class BisonTests
             string output = writer.ToString();
 
             // Assert
-            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine +
+            Assert.Equal("Location: DR Byen" + Environment.NewLine +
+                         "ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine +
                          "- raap @ 08/01/23 12:09:20: A bird indeed" + Environment.NewLine, output);
         }
         finally
@@ -97,7 +98,7 @@ public class BisonTests
             IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
             IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
 
-            string[] args = ["read"];
+            string[] args = ["read", "DR Byen"];
 
             Console.SetOut(writer);
 
@@ -105,7 +106,7 @@ public class BisonTests
 
             string output = writer.ToString();
 
-            Assert.Equal("ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
+            Assert.Equal("Location: DR Byen" + Environment.NewLine + "ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
         }
         finally
         {
@@ -119,10 +120,17 @@ public class BisonTests
         IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
         IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
 
-        string[] args = ["observe", "Penguin"];
+        string[] args = ["observe", "Penguin", "Copenhagen"];
 
         ObservationRecord last = observationDatabase.Read().Last();
-        ObservationRecord expected = new ObservationRecord { Author = Environment.UserName, Observation = "Penguin", Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID };
+        ObservationRecord expected = new ObservationRecord
+        {
+            Author = Environment.UserName,
+            Observation = "Penguin",
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ID = ++last.ID,
+            Location = "Copenhagen"
+        };
 
         UserInterface.run(args, observationDatabase, commentDatabase);
 

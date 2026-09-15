@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using System.Globalization;
 
 namespace SimpleDB;
@@ -13,6 +12,8 @@ public record ObservationRecord
 
     public override string ToString()
     {
-        return Author + " @ " + DateTimeOffset.FromUnixTimeSeconds(Timestamp).ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture) + ": " + Observation;
+        return "Location: " + Location + Environment.NewLine + Author +
+               " @ " + DateTimeOffset.FromUnixTimeSeconds(Timestamp).ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture) +
+               ": " + Observation;
     }
 }
