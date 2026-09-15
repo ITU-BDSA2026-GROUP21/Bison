@@ -17,10 +17,20 @@ public static class UserInterface
         rootCommand.Add(commentCommand);
         rootCommand.Add(discusionCommand);
 
+        Argument<String?> readLocation = new("optional:location")
+        {
+            Description = "Optional string for sorting observations by location",
+            DefaultValueFactory = _ => ""
+        };
+
+        readCommand.Add(readLocation);
+
         readCommand.SetAction(parseResult =>
         {
-            read(observations);
+            string input = parseResult.GetValue(readLocation).ToLower();
+            read(observations, input);
         });
+
 
 
         Argument<String> observation = new("observation")
@@ -28,12 +38,19 @@ public static class UserInterface
             Description = "The observation you want to add"
         };
 
+        Argument<String> location = new("location")
+        {
+            Description = "The location of your observation"
+        };
+
         obeserveCommand.Arguments.Add(observation);
+        obeserveCommand.Arguments.Add(location);
 
         obeserveCommand.SetAction(parseResult =>
         {
             string input = parseResult.GetValue(observation);
-            observe(observations, input);
+            string locationArg = parseResult.GetValue(location);
+            observe(observations, input, locationArg);
         });
 
 
@@ -57,6 +74,7 @@ public static class UserInterface
             comment(observations, comments, commentID, commentArg);
         });
 
+
         Argument<int> discusionID = new("discussionID")
         {
             Description = "The ID of the observation you want to comment from"
@@ -75,31 +93,44 @@ public static class UserInterface
         parseResult.Invoke();
 
     }
-    public static void read(IDatabaseRepository<ObservationRecord> observationDB)
+    public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
     {
         var records = observationDB.Read();
-
-        PrintObservations(records);
+        PrintObservations(records, readLocation);
 
     }
 
-    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input)
+    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input, string location)
     {
         var records = observationDB.Read();
         ObservationRecord last = records.Last();
 
-        observationDB.Store(new ObservationRecord { Author = Environment.UserName, Observation = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = ++last.ID });
+        observationDB.Store(new ObservationRecord
+        {
+            Author = Environment.UserName,
+            Observation = input,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ID = ++last.ID,
+            Location = location
+        });
 
     }
 
-    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB, int argID, string input)
+    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
+    int argID, string input)
     {
         var observationRecords = observationDB.Read();
         foreach (ObservationRecord obs in observationRecords)
         {
             if (obs.ID == argID)
             {
-                commentDB.Store(new CommentRecord { Author = Environment.UserName, Comment = input, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = argID });
+                commentDB.Store(new CommentRecord
+                {
+                    Author = Environment.UserName,
+                    Comment = input,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    ObservationID = argID
+                });
                 return;
             }
         }
@@ -107,21 +138,34 @@ public static class UserInterface
         throw new ArgumentException("ID: " + argID + " does not exist!");
     }
 
-    static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB, int observationID)
+    public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,
+    int observationID)
     {
         var commentRecords = commentDB.Read();
         var observationRecords = observationDB.Read();
         PrintComments(commentRecords, observationRecords, observationID);
     }
 
-
-    public static void PrintObservations(IEnumerable<ObservationRecord> obs)
+    public static void PrintObservations(IEnumerable<ObservationRecord> obs, string? location)
     {
         foreach (ObservationRecord o in obs)
         {
-            Console.WriteLine(o);
+            if (location == "")
+            {
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+                Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+            }
+            else
+            {
+                if (o.Location.ToLower().StartsWith(location))
+                {
+                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+                    Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+                }
+            }
         }
     }
+
     public static void PrintComments(IEnumerable<CommentRecord> com, IEnumerable<ObservationRecord> obs, int ID)
     {
 
@@ -129,7 +173,8 @@ public static class UserInterface
         {
             if (o.ID == ID)
             {
-                Console.WriteLine(o);
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
+                Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
             }
         }
 
@@ -137,7 +182,8 @@ public static class UserInterface
         {
             if (r.ObservationID == ID)
             {
-                Console.WriteLine("- " + r);
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp)).ToLocalTime();
+                Console.WriteLine("– " + r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
             }
         }
     }
