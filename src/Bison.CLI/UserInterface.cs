@@ -27,7 +27,7 @@ public static class UserInterface
 
         readCommand.SetAction(parseResult =>
         {
-            string input = parseResult.GetValue(readLocation).ToLower();
+            string input = parseResult.GetValue(readLocation);
             read(observations, input);
         });
 
@@ -152,15 +152,13 @@ public static class UserInterface
         {
             if (location == "")
             {
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
-                Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+                Console.WriteLine(o);
             }
             else
             {
-                if (o.Location.ToLower().StartsWith(location))
+                if (o.Location.StartsWith(location, StringComparison.OrdinalIgnoreCase))
                 {
-                    DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
-                    Console.WriteLine("Location: " + o.Location + "\n" + o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation + "\n");
+                    Console.WriteLine(o);
                 }
             }
         }
@@ -173,8 +171,7 @@ public static class UserInterface
         {
             if (o.ID == ID)
             {
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(o.Timestamp)).ToLocalTime();
-                Console.WriteLine(o.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + o.Observation);
+                Console.WriteLine(o);
             }
         }
 
@@ -182,8 +179,7 @@ public static class UserInterface
         {
             if (r.ObservationID == ID)
             {
-                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds((long)Convert.ToDouble(r.Timestamp)).ToLocalTime();
-                Console.WriteLine("– " + r.Author + " @ " + date.ToString("MM/dd/yy HH:mm:ss") + ": " + r.Comment);
+                Console.WriteLine("- " + r);
             }
         }
     }

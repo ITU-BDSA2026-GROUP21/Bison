@@ -16,7 +16,14 @@ public class SimpleDBTests
 
         Assert.Single(observationDatabase.Read()); // Precondition check
 
-        ObservationRecord o = new ObservationRecord { Author = "test", Observation = "This is a test", Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ID = 1 };
+        ObservationRecord o = new ObservationRecord
+        {
+            Author = "test",
+            Observation = "This is a test",
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ID = 1,
+            Location = ""
+        };
 
         // Act
         observationDatabase.Store(o);
@@ -34,7 +41,13 @@ public class SimpleDBTests
 
         Assert.Single(commentDatabase.Read()); // Precondition check
 
-        CommentRecord o = new CommentRecord { Author = "test", Comment = "This is a test", Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(), ObservationID = 1 };
+        CommentRecord o = new CommentRecord
+        {
+            Author = "test",
+            Comment = "This is a test",
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ObservationID = 1
+        };
 
         // Act
         commentDatabase.Store(o);
