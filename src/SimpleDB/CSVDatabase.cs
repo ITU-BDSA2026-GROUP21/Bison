@@ -35,9 +35,14 @@ sealed public class CSVDatabase<T> : IDatabaseRepository<T>
             using StreamReader reader = new(filePath);
             using (var csv = new CsvReader(reader, config))
             {
-                var records = csv.GetRecords<T>().ToList();
+                var records = csv.GetRecords<T>();
 
-                return records;
+                if (limit.HasValue)
+                {
+                    records = records.Take(limit.Value);
+                }
+
+                return records.ToList();
             }
         }
         catch (Exception e)

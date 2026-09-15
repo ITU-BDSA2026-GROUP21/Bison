@@ -134,7 +134,8 @@ public static class UserInterface
                 return;
             }
         }
-        Console.WriteLine("ID: " + argID + " does not exist!");
+
+        throw new ArgumentException("ID: " + argID + " does not exist!");
     }
 
     public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,

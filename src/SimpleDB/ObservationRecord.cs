@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace SimpleDB;
 
@@ -9,4 +10,9 @@ public record ObservationRecord
     public required long Timestamp { get; set; }
     public required int ID { get; set; }
     public required string Location { get; set; }
+
+    public override string ToString()
+    {
+        return Author + " @ " + DateTimeOffset.FromUnixTimeSeconds(Timestamp).ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture) + ": " + Observation;
+    }
 }
