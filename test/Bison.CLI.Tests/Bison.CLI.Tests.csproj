@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../testdata/**/*"
-          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../testdata/**/*" >
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>  
   </ItemGroup>
 
 </Project>

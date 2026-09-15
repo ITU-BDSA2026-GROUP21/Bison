@@ -137,7 +137,7 @@ public static class UserInterface
         {
             if (r.ObservationID == ID)
             {
-                Console.WriteLine("– " + r);
+                Console.WriteLine("- " + r);
             }
         }
     }
