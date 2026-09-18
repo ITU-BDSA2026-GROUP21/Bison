@@ -72,11 +72,11 @@ public static class UserInterface
         commentCommand.Arguments.Add(id);
         commentCommand.Arguments.Add(commentText);
 
-        commentCommand.SetAction(parseResult =>
+        commentCommand.SetAction(async parseResult =>
         {
             int commentID = parseResult.GetValue(id);
             string commentArg = parseResult.GetValue(commentText);
-            comment(observations, comments, commentID, commentArg);
+            await comment(commentID, commentArg);
         });
 
 
@@ -131,7 +131,25 @@ public static class UserInterface
         await client.PostAsJsonAsync("observation", observation);
     }
 
-    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
+    public static async Task comment(int argID, string input)
+    {
+
+        var baseURL = "http://localhost:5004";
+        using HttpClient client = new();
+
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.BaseAddress = new Uri(baseURL);
+
+        var comment = new Comment(
+            input,
+            argID
+        );
+
+        await client.PostAsJsonAsync("comment", comment);
+    }
+
+    /*public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
     int argID, string input)
     {
         var observationRecords = observationDB.Read();
@@ -151,7 +169,7 @@ public static class UserInterface
         }
 
         throw new ArgumentException("ID: " + argID + " does not exist!");
-    }
+    }*/
 
     public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,
     int observationID)
