@@ -1,5 +1,9 @@
 using SimpleDB;
 using System.CommandLine;
+
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 public static class UserInterface
 {
 
@@ -25,10 +29,10 @@ public static class UserInterface
 
         readCommand.Add(readLocation);
 
-        readCommand.SetAction(parseResult =>
+        readCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(readLocation);
-            read(observations, input);
+            await read(input);
         });
 
 
@@ -93,12 +97,27 @@ public static class UserInterface
         parseResult.Invoke();
 
     }
-    public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
+
+    public static async Task read(string? readLocation)
+    {
+        var baseURL = "http://localhost:5004";
+        using HttpClient client = new();
+
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.BaseAddress = new Uri(baseURL);
+
+        var records = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
+
+        PrintObservations(records, readLocation);
+    }
+
+    /*public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
     {
         var records = observationDB.Read();
         PrintObservations(records, readLocation);
 
-    }
+    }*/
 
     public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input, string location)
     {
