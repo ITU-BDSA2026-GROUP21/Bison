@@ -87,10 +87,10 @@ public static class UserInterface
 
         discusionCommand.Arguments.Add(discusionID);
 
-        discusionCommand.SetAction(ParseResult =>
+        discusionCommand.SetAction(async ParseResult =>
         {
             int ID = ParseResult.GetValue(discusionID);
-            discussion(comments, observations, ID);
+            await discussion(ID);
         });
 
 
@@ -133,7 +133,6 @@ public static class UserInterface
 
     public static async Task comment(int argID, string input)
     {
-
         var baseURL = "http://localhost:5004";
         using HttpClient client = new();
 
@@ -149,34 +148,20 @@ public static class UserInterface
         await client.PostAsJsonAsync("comment", comment);
     }
 
-    /*public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
-    int argID, string input)
+    public static async Task discussion(int observationID)
     {
-        var observationRecords = observationDB.Read();
-        foreach (ObservationRecord obs in observationRecords)
-        {
-            if (obs.ID == argID)
-            {
-                commentDB.Store(new CommentRecord
-                {
-                    Author = Environment.UserName,
-                    Comment = input,
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ObservationID = argID
-                });
-                return;
-            }
-        }
+        var baseURL = "http://localhost:5004";
+        using HttpClient client = new();
 
-        throw new ArgumentException("ID: " + argID + " does not exist!");
-    }*/
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.BaseAddress = new Uri(baseURL);
 
-    public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,
-    int observationID)
-    {
-        var commentRecords = commentDB.Read();
-        var observationRecords = observationDB.Read();
-        PrintComments(commentRecords, observationRecords, observationID);
+        var CRecords = await client.GetFromJsonAsync<List<CommentRecord>>($"comments/{observationID}");
+        var ORecords = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
+
+        PrintComments(CRecords, ORecords, observationID);
+
     }
 
     public static void PrintObservations(IEnumerable<ObservationRecord> obs, string? location)
