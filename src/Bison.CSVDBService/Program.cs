@@ -24,9 +24,36 @@ app.MapPost("/observation", (Observation observation) => observationDatabase.Sto
     Location = observation.Location
 }));
 
+app.MapPost("/comment", (Comment comment) =>
+{
+    var observationRecords = observationDatabase.Read();
+    foreach (ObservationRecord obs in observationRecords)
+    {
+        if (obs.ID == comment.ID)
+        {
+            commentDatabase.Store(new CommentRecord
+            {
+                Author = Environment.UserName,
+                Comment = comment.Message,
+                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                ObservationID = comment.ID
+            });
+            return;
+        }
+    }
+
+    throw new ArgumentException("ID: " + comment.ID + " does not exist!");
+});
+
+
 app.Run();
 
 public record Observation(
     string Message,
     string Location
+);
+
+public record Comment(
+    string Message,
+    int ID
 );
