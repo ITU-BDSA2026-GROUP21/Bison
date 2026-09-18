@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 public static class UserInterface
 {
 
@@ -50,11 +51,11 @@ public static class UserInterface
         obeserveCommand.Arguments.Add(observation);
         obeserveCommand.Arguments.Add(location);
 
-        obeserveCommand.SetAction(parseResult =>
+        obeserveCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(observation);
             string locationArg = parseResult.GetValue(location);
-            observe(observations, input, locationArg);
+            await observe(input, locationArg);
         });
 
 
@@ -112,27 +113,22 @@ public static class UserInterface
         PrintObservations(records, readLocation);
     }
 
-    /*public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
+    public static async Task observe(string input, string location)
     {
-        var records = observationDB.Read();
-        PrintObservations(records, readLocation);
 
-    }*/
+        var baseURL = "http://localhost:5004";
+        using HttpClient client = new();
 
-    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input, string location)
-    {
-        var records = observationDB.Read();
-        ObservationRecord last = records.Last();
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.BaseAddress = new Uri(baseURL);
 
-        observationDB.Store(new ObservationRecord
-        {
-            Author = Environment.UserName,
-            Observation = input,
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            ID = ++last.ID,
-            Location = location
-        });
+        var observation = new Observation(
+            input,
+            location
+        );
 
+        await client.PostAsJsonAsync("observation", observation);
     }
 
     public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
@@ -203,3 +199,12 @@ public static class UserInterface
         }
     }
 }
+public record Observation(
+    string Message,
+    string Location
+);
+
+public record Comment(
+    string Message,
+    int ID
+);
