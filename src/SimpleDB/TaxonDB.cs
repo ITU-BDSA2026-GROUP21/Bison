@@ -1,12 +1,13 @@
 namespace SimpleDB;
 
+using System.ComponentModel;
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 
 public sealed class TaxonDB
 {
-    private readonly string filePath;
+    private readonly string filePath = "data/taxons/joined.csv";
     private readonly List<TaxonRecord> records;
     private static TaxonDB? instance;
     CsvConfiguration config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -15,9 +16,8 @@ public sealed class TaxonDB
         NewLine = Environment.NewLine,
     };
 
-    private TaxonDB(string filePath)
+    private TaxonDB()
     {
-        this.filePath = filePath;
         records = new List<TaxonRecord>();
 
         try
@@ -48,13 +48,57 @@ public sealed class TaxonDB
         }
     }
 
-    public static TaxonDB getInstance(string filePath)
+    public static TaxonDB getInstance()
     {
         if (instance == null)
         {
-            instance = new TaxonDB(filePath);
+            instance = new TaxonDB();
         }
         return instance;
     }
 
+    public TaxonRecord getFromID(string ID)
+    {
+        foreach (TaxonRecord tr in records)
+        {
+            if (tr.TaxonID == ID)
+            {
+                return tr;
+            }
+        }
+        throw new ArgumentException("No such TaxonID exists in the database!");
+    }
+
+    public TaxonRecord getFromVernacular(string name)
+    {
+        foreach (TaxonRecord tr in records)
+        {
+            if (tr.VernacularName == name)
+            {
+                return tr;
+            }
+        }
+        throw new ArgumentException("No bird with such a name exists in the database!");
+    }
+
+    public TaxonRecord getSuperTaxon(string ID)
+    {
+        string parentID = getFromID(ID).ParentID;
+        return getFromID(parentID);
+    }
+
+    public List<TaxonRecord> getSubTaxons(string ID)
+    {
+        List<TaxonRecord> list = new List<TaxonRecord>();
+
+        foreach (TaxonRecord tr in records)
+        {
+            if (tr.ParentID == ID)
+            {
+                list.Add(tr);
+            }
+        }
+
+        return list;
+    }
 }
