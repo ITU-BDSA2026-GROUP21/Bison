@@ -15,5 +15,18 @@ app.MapGet("/comments/{id}", (int ID) =>
     return result;
 });
 
+app.MapPost("/observation", (Observation observation) => observationDatabase.Store(new ObservationRecord
+{
+    Author = Environment.UserName,
+    Observation = observation.Message,
+    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+    ID = ++observationDatabase.Read().Last().ID,
+    Location = observation.Location
+}));
+
 app.Run();
-public record Observation(string Author, string Message, long Timestamp);
+
+public record Observation(
+    string Message,
+    string Location
+);
