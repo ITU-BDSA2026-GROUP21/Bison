@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using SimpleDB;
+using System.Net.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -27,22 +29,24 @@ app.MapPost("/observation", (Observation observation) => observationDatabase.Sto
 app.MapPost("/comment", (Comment comment) =>
 {
     var observationRecords = observationDatabase.Read();
-    foreach (ObservationRecord obs in observationRecords)
+
+    //Checks if any id in the observationDatabase matches with comment id
+    //If none exist we return a BadRequest on Results
+    if (!observationRecords.Any(o => o.ID == comment.ID))
     {
-        if (obs.ID == comment.ID)
-        {
-            commentDatabase.Store(new CommentRecord
-            {
-                Author = Environment.UserName,
-                Comment = comment.Message,
-                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                ObservationID = comment.ID
-            });
-            return;
-        }
+        return Results.BadRequest($"ID: {comment.ID} does not exist!");
     }
 
-    throw new ArgumentException("ID: " + comment.ID + " does not exist!");
+    commentDatabase.Store(new CommentRecord
+    {
+        Author = Environment.UserName,
+        Comment = comment.Message,
+        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+        ObservationID = comment.ID
+    });
+    return Results.Ok();
+
+
 });
 
 

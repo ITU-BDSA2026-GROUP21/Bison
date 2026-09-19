@@ -1,14 +1,12 @@
 using SimpleDB;
 using System.CommandLine;
 
-using System.Net;
-using System.Net.Http.Headers;
+
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 public static class UserInterface
 {
 
-    public static void run(String[] args, IDatabaseRepository<ObservationRecord> observations, IDatabaseRepository<CommentRecord> comments)
+    public static async Task run(String[] args, HttpClient client)
     {
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
@@ -33,7 +31,7 @@ public static class UserInterface
         readCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(readLocation);
-            await read(input);
+            await read(client, input);
         });
 
 
@@ -55,7 +53,7 @@ public static class UserInterface
         {
             string input = parseResult.GetValue(observation);
             string locationArg = parseResult.GetValue(location);
-            await observe(input, locationArg);
+            await observe(client, input, locationArg);
         });
 
 
@@ -76,7 +74,7 @@ public static class UserInterface
         {
             int commentID = parseResult.GetValue(id);
             string commentArg = parseResult.GetValue(commentText);
-            await comment(commentID, commentArg);
+            await comment(client, commentID, commentArg);
         });
 
 
@@ -90,7 +88,7 @@ public static class UserInterface
         discusionCommand.SetAction(async ParseResult =>
         {
             int ID = ParseResult.GetValue(discusionID);
-            await discussion(ID);
+            await discussion(client, ID);
         });
 
 
@@ -99,30 +97,15 @@ public static class UserInterface
 
     }
 
-    public static async Task read(string? readLocation)
+    public static async Task read(HttpClient client, string? readLocation)
     {
-        var baseURL = "http://localhost:5004";
-        using HttpClient client = new();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        client.BaseAddress = new Uri(baseURL);
-
         var records = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
 
         PrintObservations(records, readLocation);
     }
 
-    public static async Task observe(string input, string location)
+    public static async Task observe(HttpClient client, string input, string location)
     {
-
-        var baseURL = "http://localhost:5004";
-        using HttpClient client = new();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        client.BaseAddress = new Uri(baseURL);
-
         var observation = new Observation(
             input,
             location
@@ -131,32 +114,23 @@ public static class UserInterface
         await client.PostAsJsonAsync("observation", observation);
     }
 
-    public static async Task comment(int argID, string input)
+    public static async Task comment(HttpClient client, int argID, string input)
     {
-        var baseURL = "http://localhost:5004";
-        using HttpClient client = new();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        client.BaseAddress = new Uri(baseURL);
-
         var comment = new Comment(
             input,
             argID
         );
 
-        await client.PostAsJsonAsync("comment", comment);
+        var result = await client.PostAsJsonAsync("comment", comment);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new ArgumentException(await result.Content.ReadAsStringAsync());
+        }
     }
 
-    public static async Task discussion(int observationID)
+    public static async Task discussion(HttpClient client, int observationID)
     {
-        var baseURL = "http://localhost:5004";
-        using HttpClient client = new();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        client.BaseAddress = new Uri(baseURL);
-
         var CRecords = await client.GetFromJsonAsync<List<CommentRecord>>($"comments/{observationID}");
         var ORecords = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
 
@@ -202,12 +176,3 @@ public static class UserInterface
         }
     }
 }
-public record Observation(
-    string Message,
-    string Location
-);
-
-public record Comment(
-    string Message,
-    int ID
-);
