@@ -6,7 +6,7 @@ using CsvHelper.Configuration;
 
 public sealed class TaxonDB
 {
-    private readonly string filePath = "data/taxons/joined.csv";
+    private readonly string filePath;
     private readonly List<TaxonRecord> records;
     private static TaxonDB? instance;
     CsvConfiguration config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -15,8 +15,10 @@ public sealed class TaxonDB
         NewLine = Environment.NewLine,
     };
 
-    private TaxonDB()
+    private TaxonDB(string filePath)
     {
+        this.filePath = filePath;
+
         records = new List<TaxonRecord>();
 
         try
@@ -47,11 +49,11 @@ public sealed class TaxonDB
         }
     }
 
-    public static TaxonDB getInstance()
+    public static TaxonDB getInstance(string filePath)
     {
         if (instance == null)
         {
-            instance = new TaxonDB();
+            instance = new TaxonDB(filePath);
         }
         return instance;
     }
