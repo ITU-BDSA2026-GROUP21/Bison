@@ -1,9 +1,12 @@
 using SimpleDB;
 using System.CommandLine;
+
+
+using System.Net.Http.Json;
 public static class UserInterface
 {
 
-    public static void run(String[] args, IDatabaseRepository<ObservationRecord> observations, IDatabaseRepository<CommentRecord> comments)
+    public static async Task run(String[] args, HttpClient client)
     {
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
@@ -25,10 +28,10 @@ public static class UserInterface
 
         readCommand.Add(readLocation);
 
-        readCommand.SetAction(parseResult =>
+        readCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(readLocation);
-            read(observations, input);
+            await read(client, input);
         });
 
 
@@ -46,11 +49,11 @@ public static class UserInterface
         obeserveCommand.Arguments.Add(observation);
         obeserveCommand.Arguments.Add(location);
 
-        obeserveCommand.SetAction(parseResult =>
+        obeserveCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(observation);
             string locationArg = parseResult.GetValue(location);
-            observe(observations, input, locationArg);
+            await observe(client, input, locationArg);
         });
 
 
@@ -67,11 +70,11 @@ public static class UserInterface
         commentCommand.Arguments.Add(id);
         commentCommand.Arguments.Add(commentText);
 
-        commentCommand.SetAction(parseResult =>
+        commentCommand.SetAction(async parseResult =>
         {
             int commentID = parseResult.GetValue(id);
             string commentArg = parseResult.GetValue(commentText);
-            comment(observations, comments, commentID, commentArg);
+            await comment(client, commentID, commentArg);
         });
 
 
@@ -82,10 +85,10 @@ public static class UserInterface
 
         discusionCommand.Arguments.Add(discusionID);
 
-        discusionCommand.SetAction(ParseResult =>
+        discusionCommand.SetAction(async ParseResult =>
         {
             int ID = ParseResult.GetValue(discusionID);
-            discussion(comments, observations, ID);
+            await discussion(client, ID);
         });
 
 
@@ -93,57 +96,46 @@ public static class UserInterface
         parseResult.Invoke();
 
     }
-    public static void read(IDatabaseRepository<ObservationRecord> observationDB, string? readLocation)
+
+    public static async Task read(HttpClient client, string? readLocation)
     {
-        var records = observationDB.Read();
+        var records = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
+
         PrintObservations(records, readLocation);
-
     }
 
-    public static void observe(IDatabaseRepository<ObservationRecord> observationDB, string input, string location)
+    public static async Task observe(HttpClient client, string input, string location)
     {
-        var records = observationDB.Read();
-        ObservationRecord last = records.Last();
+        var observation = new Observation(
+            input,
+            location
+        );
 
-        observationDB.Store(new ObservationRecord
-        {
-            Author = Environment.UserName,
-            Observation = input,
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            ID = ++last.ID,
-            Location = location
-        });
-
+        await client.PostAsJsonAsync("observation", observation);
     }
 
-    public static void comment(IDatabaseRepository<ObservationRecord> observationDB, IDatabaseRepository<CommentRecord> commentDB,
-    int argID, string input)
+    public static async Task comment(HttpClient client, int argID, string input)
     {
-        var observationRecords = observationDB.Read();
-        foreach (ObservationRecord obs in observationRecords)
+        var comment = new Comment(
+            input,
+            argID
+        );
+
+        var result = await client.PostAsJsonAsync("comment", comment);
+
+        if (!result.IsSuccessStatusCode)
         {
-            if (obs.ID == argID)
-            {
-                commentDB.Store(new CommentRecord
-                {
-                    Author = Environment.UserName,
-                    Comment = input,
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ObservationID = argID
-                });
-                return;
-            }
+            throw new ArgumentException(await result.Content.ReadAsStringAsync());
         }
-
-        throw new ArgumentException("ID: " + argID + " does not exist!");
     }
 
-    public static void discussion(IDatabaseRepository<CommentRecord> commentDB, IDatabaseRepository<ObservationRecord> observationDB,
-    int observationID)
+    public static async Task discussion(HttpClient client, int observationID)
     {
-        var commentRecords = commentDB.Read();
-        var observationRecords = observationDB.Read();
-        PrintComments(commentRecords, observationRecords, observationID);
+        var CRecords = await client.GetFromJsonAsync<List<CommentRecord>>($"comments/{observationID}");
+        var ORecords = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
+
+        PrintComments(CRecords, ORecords, observationID);
+
     }
 
     public static void PrintObservations(IEnumerable<ObservationRecord> obs, string? location)

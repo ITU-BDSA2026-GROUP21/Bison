@@ -1,4 +1,6 @@
 using SimpleDB;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace Bison.CLI.Tests;
 
@@ -8,31 +10,6 @@ public class BisonTests
     string observationPath = Path.Combine(AppContext.BaseDirectory, "bison_observe_cli_db_test.csv");
 
     string commentPath = Path.Combine(AppContext.BaseDirectory, "bison_comment_cli_db_test.csv");
-
-    [Fact]
-    public void NonExistentObservationID()
-    {
-        // Arrange
-        CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
-
-        CSVDatabase<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
-
-        bool argumentThrown = false;
-
-        // Act
-        try
-        {
-            UserInterface.comment(observationDatabase, commentDatabase, 9999999, "Test Comment");
-        }
-        catch (ArgumentException e)
-        {
-            Console.WriteLine(e.Message);
-            argumentThrown = true;
-        }
-
-        // Assert
-        Assert.True(argumentThrown, "Should throw an ArgumentException");
-    }
 
     [Fact]
     public void ObservationPrinting()
@@ -87,54 +64,4 @@ public class BisonTests
         }
     }
 
-
-    [Fact]
-    public void EndToEndRead()
-    {
-        var originalOut = Console.Out;
-        using var writer = new StringWriter();
-        try
-        {
-            IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
-            IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
-
-            string[] args = ["read", "DR Byen"];
-
-            Console.SetOut(writer);
-
-            UserInterface.run(args, observationDatabase, commentDatabase);
-
-            string output = writer.ToString();
-
-            Assert.Equal("Location: DR Byen" + Environment.NewLine + "ropf @ 08/01/23 12:09:20: A bird at DR Byen" + Environment.NewLine, output);
-        }
-        finally
-        {
-            Console.SetOut(originalOut);
-        }
-    }
-
-    [Fact]
-    public void EndToEndObserve()
-    {
-        IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
-        IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
-
-        string[] args = ["observe", "Penguin", "Copenhagen"];
-
-        ObservationRecord last = observationDatabase.Read().Last();
-        ObservationRecord expected = new ObservationRecord
-        {
-            Author = Environment.UserName,
-            Observation = "Penguin",
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            ID = ++last.ID,
-            Location = "Copenhagen"
-        };
-
-        UserInterface.run(args, observationDatabase, commentDatabase);
-
-        var actual = observationDatabase.Read().Last();
-        Assert.Equal(expected.ToString(), actual.ToString());
-    }
 }
