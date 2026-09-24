@@ -11,14 +11,18 @@ public static class UserInterface
         RootCommand rootCommand = new("Bison program app: By Daniel, Frederik, Rasmus, Thor & Valdemar");
 
         Command readCommand = new("read", "Read from the database");
-        Command obeserveCommand = new("observe", "Add a new observation to the database");
+        Command observeCommand = new("observe", "Add a new observation to the database");
         Command commentCommand = new("comment", "Add a comment to an observation");
         Command discusionCommand = new("discussion", "Read comments from an observation");
+        Command proposalCommand = new("proposal", "Propose a taxon for an observation");
+        Command proposalsCommand = new("proposals", "Read proposals for an observation");
 
         rootCommand.Add(readCommand);
-        rootCommand.Add(obeserveCommand);
+        rootCommand.Add(observeCommand);
         rootCommand.Add(commentCommand);
         rootCommand.Add(discusionCommand);
+        rootCommand.Add(proposalCommand);
+        rootCommand.Add(proposalsCommand);
 
         Argument<String?> readLocation = new("optional:location")
         {
@@ -46,10 +50,10 @@ public static class UserInterface
             Description = "The location of your observation"
         };
 
-        obeserveCommand.Arguments.Add(observation);
-        obeserveCommand.Arguments.Add(location);
+        observeCommand.Arguments.Add(observation);
+        observeCommand.Arguments.Add(location);
 
-        obeserveCommand.SetAction(async parseResult =>
+        observeCommand.SetAction(async parseResult =>
         {
             string input = parseResult.GetValue(observation);
             string locationArg = parseResult.GetValue(location);
@@ -91,6 +95,38 @@ public static class UserInterface
             await discussion(client, ID);
         });
 
+        Argument<int> proposalID = new("proposalID")
+        {
+            Description = "The ID of the observation you want to propose a taxon for"
+        };
+
+        Argument<string> taxonID = new("taxonID")
+        {
+            Description = "The ID of the taxon you want to propose for the observation"
+        };
+
+        proposalCommand.Arguments.Add(proposalID);
+        proposalCommand.Arguments.Add(taxonID);
+
+        proposalCommand.SetAction(async parseResult =>
+        {
+            int obsID = parseResult.GetValue(proposalID);
+            string proposalArg = parseResult.GetValue(taxonID);
+            await propose(client, obsID, proposalArg);
+        });
+
+        Argument<int> proposalsID = new("proposalsID")
+        {
+            Description = "The ID of the observation you want to see proposals for"
+        };
+
+        proposalsCommand.Arguments.Add(proposalsID);
+
+        proposalsCommand.SetAction(async ParseResult =>
+        {
+            int ID = ParseResult.GetValue(proposalsID);
+            await proposals(client, ID);
+        });
 
         ParseResult parseResult = rootCommand.Parse(args);
         parseResult.Invoke();
@@ -129,12 +165,36 @@ public static class UserInterface
         }
     }
 
+    public static async Task propose(HttpClient client, int obsID, string proposedTaxonID)
+    {
+        var proposal = new Proposal(
+            proposedTaxonID,
+            obsID
+        );
+
+        var result = await client.PostAsJsonAsync("proposal", proposal);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new ArgumentException(await result.Content.ReadAsStringAsync());
+        }
+    }
+
     public static async Task discussion(HttpClient client, int observationID)
     {
         var CRecords = await client.GetFromJsonAsync<List<CommentRecord>>($"comments/{observationID}");
         var ORecords = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
 
         PrintComments(CRecords, ORecords, observationID);
+
+    }
+
+    public static async Task proposals(HttpClient client, int observationID)
+    {
+        var PRecords = await client.GetFromJsonAsync<List<ProposalRecord>>($"proposals/{observationID}");
+        var ORecords = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
+
+        PrintProposals(PRecords, ORecords, observationID);
 
     }
 
@@ -172,6 +232,26 @@ public static class UserInterface
             if (r.ObservationID == ID)
             {
                 Console.WriteLine("- " + r);
+            }
+        }
+    }
+
+    public static void PrintProposals(IEnumerable<ProposalRecord> pro, IEnumerable<ObservationRecord> obs, int ID)
+    {
+
+        foreach (ObservationRecord o in obs)
+        {
+            if (o.ID == ID)
+            {
+                Console.WriteLine(o);
+            }
+        }
+
+        foreach (ProposalRecord p in pro)
+        {
+            if (p.ObservationID == ID)
+            {
+                Console.WriteLine("- " + p);
             }
         }
     }
