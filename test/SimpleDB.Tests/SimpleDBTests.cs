@@ -11,13 +11,16 @@ public class SimpleDBTests
 
     string proposalPath = Path.Combine(AppContext.BaseDirectory, "bison_proposal_cli_db_test.csv");
 
-    /*[Fact]
+
+    [Fact]
     public void StoringObservationInCSV()
     {
         // Arrange
         CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
 
-        Assert.Single(observationDatabase.Read()); // Precondition check
+        int beforeAdding = observationDatabase.Read().Count();
+
+        Assert.Equal(beforeAdding, observationDatabase.Read().Count()); // Precondition check
 
         ObservationRecord o = new ObservationRecord
         {
@@ -32,9 +35,10 @@ public class SimpleDBTests
         observationDatabase.Store(o);
 
         // Assert
-        Assert.Equal(2, observationDatabase.Read().Count()); // Postcondition check
+        Assert.Equal(beforeAdding + 1, observationDatabase.Read().Count()); // Postcondition check
     }
-    */
+
+
 
 
     [Fact]
@@ -99,6 +103,7 @@ public class SimpleDBTests
         return new string(output);
     }
 
+
     [Fact]
     public void FuzzingObsComsProps()
     {
@@ -124,105 +129,126 @@ public class SimpleDBTests
         validTaxonIDs.Add("MSTSNM:Arter:ca4d8cf8-f785-ea11-aa77-501ac539d1ea");
         validTaxonIDs.Add("MSTSNM:Arter:f3fa2bf9-f785-ea11-aa77-501ac539d1ea");
 
-        // Act
         var random = new Random();
+
+        var failedComms = 0;
+        var failedProps = 0;
+
+        // Act
+
         for (int i = 0; i < 100; i++)
         {
             // Generate either observation/comment/proposal
-            var generatedType = random.Next(0, 2);
-            if (generatedType == 0)
+            var generatedType = random.Next(0, 3);
+            switch (generatedType)
             {
-                var author = Fuzzer();
-                var observation = Fuzzer();
-                var Location = Fuzzer();
-                var id = ++observationDatabase.Read().Last().ID;
+                case 0: //OBSERVATIONS
+                    var obsAuthor = Fuzzer();
+                    var observation = Fuzzer();
+                    var Location = Fuzzer();
+                    var id = ++observationDatabase.Read().Last().ID;
+                    validObservationIDs.Add(id);
 
-                ObservationRecord o = new ObservationRecord
-                {
-                    Author = author,
-                    Observation = observation,
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ID = id,
-                    Location = Location
-                };
-                oracle.observations.Add(o);
-                observationDatabase.Store(o);
-            }
+                    ObservationRecord o = new ObservationRecord
+                    {
+                        Author = obsAuthor,
+                        Observation = observation,
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                        ID = id,
+                        Location = Location
+                    };
+                    oracle.observations.Add(id);
+                    observationDatabase.Store(o);
 
-            if (generatedType == 1)
-            {
+                    break;
 
-                var author = Fuzzer();
-                var comment = Fuzzer();
-                int obsID;
+                case 1: //COMMENTS
+                    var comAuthor = Fuzzer();
+                    var comment = Fuzzer();
+                    int obsID;
 
-                if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
-                {
-                    obsID = random.Next(0, observationDatabase.Read().Count() - 1);
-                    //the ones oracle accepts
-                }
-                else
-                {
-                    obsID = random.Next(1000, validObservationIDs.Count + 1000);
-                    //the ones oracle declines
-                }
+                    if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
+                    {
+                        obsID = random.Next(0, observationDatabase.Read().Count());
+                        //the ones oracle accepts
+                        oracle.comments.Add(comment);
+                    }
+                    else
+                    {
+                        obsID = random.Next(1000, validObservationIDs.Count + 1000);
+                        //the ones oracle declines
+                        failedComms++;
+                    }
 
-                CommentRecord c = new CommentRecord
-                {
-                    Author = author,
-                    Comment = comment,
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ObservationID = obsID
-                };
-                oracle.comments.Add(c);
-                commentDatabase.Store(c);
-            }
+                    CommentRecord c = new CommentRecord
+                    {
+                        Author = comAuthor,
+                        Comment = comment,
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                        ObservationID = obsID
+                    };
+                    commentDatabase.Store(c);
 
-            if (generatedType == 2)
-            {
-                string taxonID;
+                    break;
 
+                case 2: //PROPOSALS
+                    string taxonID;
 
-                if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
-                {
+                    if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
+                    {
 
-                    taxonID = validTaxonIDs[random.Next(0, 6)];
-                    //the ones oracle accepts
-                }
-                else
-                {
-                    taxonID = Fuzzer();
-                    //the ones oracle declines
-                }
+                        taxonID = validTaxonIDs[random.Next(0, 6)];
+                        //the ones oracle accepts
+                        oracle.proposals.Add(taxonID);
+                    }
+                    else
+                    {
+                        taxonID = Fuzzer();
+                        //the ones oracle declines
+                        failedProps++;
+                    }
 
-                ProposalRecord p = new ProposalRecord
-                {
-                    Author = "",
-                    TaxonID = taxonID,
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ObservationID = random.Next(0, observationDatabase.Read().Count() - 1)
-                };
-                oracle.proposals.Add(p);
-                proposalDatabase.Store(p);
+                    ProposalRecord p = new ProposalRecord
+                    {
+                        Author = "",
+                        TaxonID = taxonID,
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                        ObservationID = random.Next(0, observationDatabase.Read().Count())
+                    };
+                    proposalDatabase.Store(p);
+
+                    break;
+
+                default:
+                    break;
             }
         }
 
 
-
-
-        //and make sure the Oracle validates the validity of each entry
-
         // Assert
-        //easiest asserting case is by checking the size and contents of the databases compared to the Oracle
-        //if that is not enough, we must check the complete outputs of each database, and then compare those with the Oracle
-    }
 
+        Assert.Equal(observationDatabase.Read().Count(), oracle.observations.Count() + 1);
+        Assert.Equal(commentDatabase.Read().Count() - failedComms, oracle.comments.Count() + 2);
+        Assert.Equal(proposalDatabase.Read().Count() - failedProps, oracle.proposals.Count() + 1);
+
+        foreach (var idCheck in oracle.observations)
+        {
+            Assert.Equal(oracle.observations.Contains(idCheck), validObservationIDs.Contains(idCheck));
+        }
+    }
 }
 
 public class Oracle
 {
-    public List<ObservationRecord> observations;
-    public List<CommentRecord> comments;
-    public List<ProposalRecord> proposals;
+    public List<int> observations;
+    public List<String> comments;
+    public List<String> proposals;
+
+    public Oracle()
+    {
+        observations = new List<int>();
+        comments = new List<String>();
+        proposals = new List<String>();
+    }
 
 }
