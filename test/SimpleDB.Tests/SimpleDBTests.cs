@@ -7,6 +7,7 @@ public class SimpleDBTests
 
     string commentPath = Path.Combine(AppContext.BaseDirectory, "bison_comment_cli_db_test.csv");
 
+    string proposalPath = Path.Combine(AppContext.BaseDirectory, "bison_proposal_cli_db_test.csv");
 
     [Fact]
     public void StoringObservationInCSV()
@@ -54,5 +55,28 @@ public class SimpleDBTests
 
         // Assert
         Assert.Equal(2, commentDatabase.Read().Count()); // Postcondition check
+    }
+
+    [Fact]
+    public void StoringProposalInCSV()
+    {
+        // Arrange
+        CSVDatabase<ProposalRecord> proposalDatabase = CSVDatabase<ProposalRecord>.getInstance(proposalPath);
+
+        Assert.Empty(proposalDatabase.Read()); // Precondition check
+
+        ProposalRecord p = new ProposalRecord
+        {
+            Author = "test",
+            TaxonID = "MSTSNM:Arter:3e4e67e4-f785-ea11-aa77-501ac539d1ea",
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            ObservationID = 1
+        };
+
+        // Act
+        proposalDatabase.Store(p);
+
+        // Assert
+        Assert.Single(proposalDatabase.Read());
     }
 }

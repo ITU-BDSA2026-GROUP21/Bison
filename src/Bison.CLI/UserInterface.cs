@@ -82,16 +82,16 @@ public static class UserInterface
         });
 
 
-        Argument<int> discusionID = new("discussionID")
+        Argument<int> discussionID = new("discussionID")
         {
             Description = "The ID of the observation you want to comment from"
         };
 
-        discusionCommand.Arguments.Add(discusionID);
+        discusionCommand.Arguments.Add(discussionID);
 
         discusionCommand.SetAction(async ParseResult =>
         {
-            int ID = ParseResult.GetValue(discusionID);
+            int ID = ParseResult.GetValue(discussionID);
             await discussion(client, ID);
         });
 
