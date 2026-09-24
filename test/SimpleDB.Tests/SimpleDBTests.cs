@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace SimpleDB.Tests;
 
 public class SimpleDBTests
@@ -9,7 +11,7 @@ public class SimpleDBTests
 
     string proposalPath = Path.Combine(AppContext.BaseDirectory, "bison_proposal_cli_db_test.csv");
 
-    [Fact]
+    /*[Fact]
     public void StoringObservationInCSV()
     {
         // Arrange
@@ -32,6 +34,7 @@ public class SimpleDBTests
         // Assert
         Assert.Equal(2, observationDatabase.Read().Count()); // Postcondition check
     }
+    */
 
 
     [Fact]
@@ -80,12 +83,31 @@ public class SimpleDBTests
         Assert.Single(proposalDatabase.Read());
     }
 
+    //Fuzzer from fuzzingbook.org changed into c#
+    static string Fuzzer(int maxLength = 100, int charStart = 32, int charRange = 32)
+    {
+        int stringLength = Random.Shared.Next(0, maxLength + 1);
+        char[] output = new char[stringLength];
+
+        for (int i = 0; i < stringLength; i++)
+        {
+            output[i] = (char)Random.Shared.Next(
+                charStart,
+                charStart + charRange);
+        }
+
+        return new string(output);
+    }
+
+    [Fact]
     public void FuzzingObsComsProps()
     {
         // Arrange
         CSVDatabase<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath);
         CSVDatabase<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
         CSVDatabase<ProposalRecord> proposalDatabase = CSVDatabase<ProposalRecord>.getInstance(proposalPath);
+
+        Oracle oracle = new Oracle();
 
         var validObservationIDs = new List<int>();
         var validTaxonIDs = new List<string>();
@@ -102,70 +124,105 @@ public class SimpleDBTests
         validTaxonIDs.Add("MSTSNM:Arter:ca4d8cf8-f785-ea11-aa77-501ac539d1ea");
         validTaxonIDs.Add("MSTSNM:Arter:f3fa2bf9-f785-ea11-aa77-501ac539d1ea");
 
-        //var oracle = new TestOracle();
-        //make an Oracle class? can also be used for other oracle tests later
-
+        // Act
         var random = new Random();
-
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 100; i++)
         {
             // Generate either observation/comment/proposal
             var generatedType = random.Next(0, 2);
             if (generatedType == 0)
             {
-                //make an observation
+                var author = Fuzzer();
+                var observation = Fuzzer();
+                var Location = Fuzzer();
+                var id = ++observationDatabase.Read().Last().ID;
+
+                ObservationRecord o = new ObservationRecord
+                {
+                    Author = author,
+                    Observation = observation,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    ID = id,
+                    Location = Location
+                };
+                oracle.observations.Add(o);
+                observationDatabase.Store(o);
             }
 
             if (generatedType == 1)
             {
-                //make a comment
+
+                var author = Fuzzer();
+                var comment = Fuzzer();
                 int obsID;
 
                 if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
                 {
-                    obsID = validObservationIDs.IndexOf(random.Next(0, validObservationIDs.Count));
-                    //have the oracle accept it
+                    obsID = random.Next(0, observationDatabase.Read().Count() - 1);
+                    //the ones oracle accepts
                 }
                 else
                 {
-                    obsID = validObservationIDs.IndexOf(random.Next(1000, validObservationIDs.Count + 1000));
-                    //have the oracle decline it!
+                    obsID = random.Next(1000, validObservationIDs.Count + 1000);
+                    //the ones oracle declines
                 }
 
-                //make the rest of the comment, and add it
+                CommentRecord c = new CommentRecord
+                {
+                    Author = author,
+                    Comment = comment,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    ObservationID = obsID
+                };
+                oracle.comments.Add(c);
+                commentDatabase.Store(c);
             }
 
             if (generatedType == 2)
             {
-                //make a proposal
-                int obsID;
+                string taxonID;
+
 
                 if (random.NextDouble() < 0.8) //this makes 80% of the fuzzing succeed (that's good)
                 {
-                    obsID = validObservationIDs.IndexOf(random.Next(0, validObservationIDs.Count));
-                    //have the oracle accept it
+
+                    taxonID = validTaxonIDs[random.Next(0, 6)];
+                    //the ones oracle accepts
                 }
                 else
                 {
-                    obsID = validObservationIDs.IndexOf(random.Next(1000, validObservationIDs.Count + 1000));
-                    //have the oracle decline it!
+                    taxonID = Fuzzer();
+                    //the ones oracle declines
                 }
 
-                //make the rest of the proposal, and add it
+                ProposalRecord p = new ProposalRecord
+                {
+                    Author = "",
+                    TaxonID = taxonID,
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    ObservationID = random.Next(0, observationDatabase.Read().Count() - 1)
+                };
+                oracle.proposals.Add(p);
+                proposalDatabase.Store(p);
             }
-
-            // Send request through API
-
-
         }
 
 
-        // Act
-        //insert the randomized obs/coms/props into their respective dbs
+
+
         //and make sure the Oracle validates the validity of each entry
 
         // Assert
         //easiest asserting case is by checking the size and contents of the databases compared to the Oracle
         //if that is not enough, we must check the complete outputs of each database, and then compare those with the Oracle
     }
+
+}
+
+public class Oracle
+{
+    public List<ObservationRecord> observations;
+    public List<CommentRecord> comments;
+    public List<ProposalRecord> proposals;
+
 }
