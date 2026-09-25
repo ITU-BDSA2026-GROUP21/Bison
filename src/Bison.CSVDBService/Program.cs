@@ -105,3 +105,5 @@ public record Proposal(
     string TaxonID,
     int ID
 );
+
+public partial class Program { }
