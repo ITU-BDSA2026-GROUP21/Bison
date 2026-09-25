@@ -1,3 +1,5 @@
+﻿namespace Bison.Testing;
+
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Testing;
