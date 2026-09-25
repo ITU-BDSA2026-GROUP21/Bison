@@ -25,7 +25,7 @@ public class ApiFixture : WebApplicationFactory<Program>
             "PROPOSAL_DB_PATH",
             Path.Combine(
                 AppContext.BaseDirectory,
-                "bison_proposal_cli_db.csv"));
+                "bison_proposal_cli_db_test.csv"));
 
         Environment.SetEnvironmentVariable(
             "TAXON_DB_PATH",
