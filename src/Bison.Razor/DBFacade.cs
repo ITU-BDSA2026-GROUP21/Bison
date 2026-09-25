@@ -8,7 +8,7 @@ public class DBFacade
         var sqlDBFilePath = "../../data/sqlite/tmp/bison.db";
         var sqlQuery = @"SELECT u.username, o.text, o.pub_date
                         FROM observation AS o 
-                        JOIN user AS u ON o.user_id = u.user_id 
+                        JOIN user AS u ON o.author_id = u.user_id 
                         ORDER by o.pub_date desc";
         List<ObservationViewModel> list = new List<ObservationViewModel>();
         using (var connection = new SqliteConnection($"Data Source={sqlDBFilePath}"))
@@ -24,12 +24,11 @@ public class DBFacade
             while (reader.Read())
             {
                 var dataRecord = (IDataRecord)reader;
-                for (int i = 0; i < dataRecord.FieldCount; i++)
-                {
-                    Console.WriteLine("Data record 1: " + dataRecord[i]);
+                string name = reader.GetString(0);
+                string text = reader.GetString(1);
+                int pubDate = reader.GetInt32(2);
 
-
-                }
+                list.Add(new ObservationViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
             }
             return list;
         }
