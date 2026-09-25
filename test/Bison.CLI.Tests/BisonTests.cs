@@ -150,6 +150,7 @@ public class BisonTests : IClassFixture<ApiFixture>
         //Arrange
         var beforeAct = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
         int beforeActID = beforeAct.Last().ID;
+        var beforeActTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         string[] args = ["observe", "Penguin", "Copenhagen"];
 
@@ -167,13 +168,13 @@ public class BisonTests : IClassFixture<ApiFixture>
         await UserInterface.run(args, client);
 
         //Assert
+        var afterActTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var afterAct = await client.GetFromJsonAsync<List<ObservationRecord>>("observations");
-        int afterActID = afterAct.Last().ID;
 
         //Need compare every aspect as the expected is a record and afterAct is json
         Assert.Equal(afterAct.Last().Author, expected.Author);
         Assert.Equal(afterAct.Last().Observation, expected.Observation);
-        Assert.Equal(afterAct.Last().Timestamp, expected.Timestamp);
+        Assert.InRange(afterAct.Last().Timestamp, beforeActTimestamp, afterActTimestamp);
         Assert.Equal(afterAct.Last().ID, expected.ID);
         Assert.Equal(afterAct.Last().Location, expected.Location);
     }
