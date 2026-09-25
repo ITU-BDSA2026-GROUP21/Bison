@@ -1,6 +1,6 @@
 namespace Bison.CSVDBService.Tests;
 
-public class UnitTest1
+public class CSVDBServiceTests
 {
     [Fact]
     public void Test1()
