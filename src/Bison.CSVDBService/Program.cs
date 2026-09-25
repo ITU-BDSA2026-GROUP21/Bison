@@ -5,10 +5,17 @@ using System.Net.Http.Json;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance("../../data/bison_observe_cli_db.csv");
-IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance("../../data/bison_comment_cli_db.csv");
-IDatabaseRepository<ProposalRecord> proposalDatabase = CSVDatabase<ProposalRecord>.getInstance("../../data/bison_proposal_cli_db.csv");
-TaxonDB taxons = TaxonDB.getInstance("../../data/taxons/joined.csv");
+var observationPath = Environment.GetEnvironmentVariable("OBSERVATION_DB_PATH") ?? "../../data/bison_observe_cli_db.csv";
+IDatabaseRepository<ObservationRecord> observationDatabase = CSVDatabase<ObservationRecord>.getInstance(observationPath!);
+
+var commentPath = Environment.GetEnvironmentVariable("COMMENT_DB_PATH") ?? "../../data/bison_comment_cli_db.csv";
+IDatabaseRepository<CommentRecord> commentDatabase = CSVDatabase<CommentRecord>.getInstance(commentPath);
+
+var proposalPath = Environment.GetEnvironmentVariable("PROPOSAL_DB_PATH") ?? "../../data/bison_proposal_cli_db.csv";
+IDatabaseRepository<ProposalRecord> proposalDatabase = CSVDatabase<ProposalRecord>.getInstance(proposalPath);
+
+var taxonPath = Environment.GetEnvironmentVariable("TAXON_DB_PATH") ?? "../../data/taxons/joined.csv";
+TaxonDB taxons = TaxonDB.getInstance(taxonPath);
 
 app.MapGet("/observations", () => observationDatabase.Read());
 
@@ -105,3 +112,5 @@ public record Proposal(
     string TaxonID,
     int ID
 );
+
+public partial class Program { }
