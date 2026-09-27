@@ -1,8 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IObservationService, ObservationService>();
+
+//Load database connection via configuration
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<BisonDbContext>(options => options.UseSqlite(connectionString));
 
 
 var app = builder.Build();

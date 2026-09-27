@@ -10,12 +10,12 @@ public class ObservationService : IObservationService
 {
     public List<ObservationViewModel> GetObservations()
     {
-        return DBFacade.getObs();
+        return DBFacade.GetObservations();
     }
 
     public List<ObservationViewModel> GetObservationsFromAuthor(string author)
     {
         // filter by the provided author name
-        return DBFacade.getObs().Where(x => x.Author == author).ToList();
+        return DBFacade.GetObservations().Where(x => x.Author == author).ToList();
     }
 }

@@ -1,37 +1,50 @@
 using System.Data;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+
+public class Observation
+{
+    public required int ObservationID { get; set; }
+    public required int AuthorID { get; set; }
+    public required string Text { get; set; }
+    public required long PubDate { get; set; }
+}
+public class User
+{
+    public required int UserID { get; set; }
+    public required string Username { get; set; }
+    public required string Email { get; set; }
+}
+
+public class BisonDbContext : DbContext
+{
+    public BisonDbContext(DbContextOptions<BisonDbContext> options) : base(options) { }
+
+    public DbSet<Observation> Observations { get; set; }
+    public DbSet<User> Users { get; set; }
+}
 public class DBFacade
 {
-    public static List<ObservationViewModel> getObs()
+    private readonly BisonDbContext dbContext;
+
+    public DBFacade(BisonDbContext _dbContext)
     {
-        //move all sqlite into DBFacade.cs later
-        var sqlDBFilePath = "../../data/sqlite/tmp/bison.db";
-        var sqlQuery = @"SELECT u.username, o.text, o.pub_date
-                        FROM observation AS o 
-                        JOIN user AS u ON o.author_id = u.user_id 
-                        ORDER by o.pub_date desc";
-        List<ObservationViewModel> list = new List<ObservationViewModel>();
-        using (var connection = new SqliteConnection($"Data Source={sqlDBFilePath}"))
-        {
-            connection.Open();
-
-            var command = connection.CreateCommand();
-            command.CommandText = sqlQuery;
-
-
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                var dataRecord = (IDataRecord)reader;
-                string name = reader.GetString(0);
-                string text = reader.GetString(1);
-                int pubDate = reader.GetInt32(2);
-
-                list.Add(new ObservationViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
-            }
-            return list;
-        }
+        dbContext = _dbContext;
+    }
+    public static async Task<List<ObservationViewModel>> GetObservations()
+    {
+        var query = from o in dbContext.Observations
+                    join u in dbContext.Users
+                        on o.AuthorID equals u.UserID
+                    orderby o.PubDate descending
+                    select new ObservationViewModel(
+                        u.Username,
+                        o.Text,
+                        UnixTimeStampToDateTimeString(o.PubDate)
+                    );
+        var result = await query.ToListAsync();
+        return result;
     }
 
     private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
