@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.CSVDBService", "src\B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{9EA53FB8-CAFE-491C-BEBA-032465BCF6E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.SQLite", "data\Bison.SQLite\Bison.SQLite.csproj", "{ACC2C460-57F7-4739-A413-648E5F339411}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.SQLite", "Bison.SQLite\Bison.SQLite.csproj", "{ACC2C460-57F7-4739-A413-648E5F339411}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.CSVDBService.Tests", "test\Bison.CSVDBService.Tests\Bison.CSVDBService.Tests.csproj", "{F85CB6BE-6931-4C35-94CB-519EBCA8EB23}"
 EndProject
