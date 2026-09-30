@@ -1,13 +1,3 @@
-cli:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "Bison.CLI/**"
-
-database:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "SimpleDB/**"
-
 ci:
   - changed-files:
       - any-glob-to-any-file:
