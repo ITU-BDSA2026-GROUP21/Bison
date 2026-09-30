@@ -21,19 +21,19 @@ public class DBFacade : IDBFacade
 
     public List<ObservationViewModel> GetObservations(int page)
     {
-        int offset = page == 1 ? 0 : (page-1) * 32; 
+        int offset = page == 1 ? 0 : (page - 1) * 32;
         int limit = 32;
         var sqlQuery = @"SELECT u.username, o.text, o.pub_date
                         FROM observation AS o 
                         JOIN user AS u ON o.author_id = u.user_id 
                         ORDER by o.pub_date desc
                         LIMIT @limit OFFSET @offset";
-        return getList(sqlQuery, ("@limit", limit), ("@offset", offset));
+        return getObservationList(sqlQuery, ("@limit", limit), ("@offset", offset));
     }
 
     public List<ObservationViewModel> GetObservationsByAuthor(string author, int page)
     {
-        int offset = page == 1 ? 0 : (page-1) * 32; 
+        int offset = page == 1 ? 0 : (page - 1) * 32;
         int limit = 32;
         var sqlQuery = @"SELECT u.username, o.text, o.pub_date
                         FROM observation AS o 
@@ -41,11 +41,24 @@ public class DBFacade : IDBFacade
                         WHERE u.username = @author
                         ORDER by o.pub_date desc
                         LIMIT @limit OFFSET @offset";
-        return getList(sqlQuery, ("@author", author), ("@limit", limit), ("@offset", offset));
+        return getObservationList(sqlQuery, ("@author", author), ("@limit", limit), ("@offset", offset));
 
     }
 
-     public List<ObservationViewModel> getList(string sqlQuery, params (string name, object value)[] parameters)
+    public List<CommentViewModel> GetCommentsByObservationID(int id, int page)
+    {
+        int offset = page == 1 ? 0 : (page - 1) * 32;
+        int limit = 32;
+        var sqlQuery = @"SELECT u.username, c.text, c.pub_date
+                        FROM comment AS c
+                        JOIN user AS u ON c.author_id = u.user_id
+                        WHERE c.observation_id = @id
+                        ORDER by c.pub_date desc
+                        LIMIT @limit OFFSET @offset";
+        return getCommentList(sqlQuery, ("@id", id), ("@limit", limit), ("@offset", offset));
+    }
+
+    public List<ObservationViewModel> getObservationList(string sqlQuery, params (string name, object value)[] parameters)
     {
         var list = new List<ObservationViewModel>();
 
@@ -55,7 +68,7 @@ public class DBFacade : IDBFacade
 
             var command = connection.CreateCommand();
             command.CommandText = sqlQuery;
-            foreach(var (name, value) in parameters)
+            foreach (var (name, value) in parameters)
             {
                 command.Parameters.AddWithValue(name, value);
             }
@@ -70,6 +83,36 @@ public class DBFacade : IDBFacade
                 int pubDate = reader.GetInt32(2);
 
                 list.Add(new ObservationViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
+            }
+            return list;
+        }
+    }
+
+    public List<CommentViewModel> getCommentList(string sqlQuery, params (string name, object value)[] parameters)
+    {
+        var list = new List<CommentViewModel>();
+
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+            foreach (var (name, value) in parameters)
+            {
+                command.Parameters.AddWithValue(name, value);
+            }
+
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var dataRecord = (IDataRecord)reader;
+                string name = reader.GetString(0);
+                string text = reader.GetString(1);
+                int pubDate = reader.GetInt32(2);
+
+                list.Add(new CommentViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
             }
             return list;
         }
