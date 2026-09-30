@@ -24,18 +24,19 @@ public class BisonDbContext : DbContext
     public DbSet<Observation> Observations { get; set; }
     public DbSet<User> Users { get; set; }
 }
+
 public class DBFacade
 {
-    private readonly BisonDbContext dbContext;
+    private readonly BisonDbContext _dbContext;
 
-    public DBFacade(BisonDbContext _dbContext)
+    public DBFacade(BisonDbContext dbContext)
     {
-        dbContext = _dbContext;
+        _dbContext = dbContext;
     }
-    public static async Task<List<ObservationViewModel>> GetObservations()
+    public async Task<List<ObservationViewModel>> GetObservations()
     {
-        var query = from o in dbContext.Observations
-                    join u in dbContext.Users
+        var query = from o in _dbContext.Observations
+                    join u in _dbContext.Users
                         on o.AuthorID equals u.UserID
                     orderby o.PubDate descending
                     select new ObservationViewModel(
