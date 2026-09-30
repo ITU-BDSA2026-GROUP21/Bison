@@ -1,7 +1,14 @@
 var builder = WebApplication.CreateBuilder(args);
 
+//Commandline for running program after introducing enviromental varible: 
+//BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
+//(This upholds from Bison.Razor directory, it changes depending on which diretory user is in)
+var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH")
+             ?? Path.Combine(Path.GetTempPath(), "bison.db");
+
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IDBFacade>(new DBFacade(dbPath));
 builder.Services.AddSingleton<IObservationService, ObservationService>();
 
 
@@ -21,5 +28,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapRazorPages();
+//Redirecting the load up page to observations page (Public.cshtml)
+app.MapGet("/", () => Results.Redirect("/obs"));
 
 app.Run();
