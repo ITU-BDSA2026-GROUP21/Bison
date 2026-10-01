@@ -58,6 +58,19 @@ public class DBFacade : IDBFacade
         return getCommentList(sqlQuery, ("@id", id), ("@limit", limit), ("@offset", offset));
     }
 
+    public List<ProposalViewModel> GetProposalsByObservationID(int id, int page)
+    {
+        int offset = page == 1 ? 0 : (page - 1) * 32;
+        int limit = 32;
+        var sqlQuery = @"SELECT u.username, p.text, p.pub_date
+                        FROM proposal as p
+                        JOIN user AS u ON p.author_id = u.user_id
+                        WHERE p.observation_id = @id
+                        ORDER by p.pub_date desc
+                        LIMIT @limit OFFSET @offset";
+        return getProposalList(sqlQuery, ("@id", id), ("@limit", limit), ("@offset", offset));
+    }
+
     public List<ObservationViewModel> getObservationList(string sqlQuery, params (string name, object value)[] parameters)
     {
         var list = new List<ObservationViewModel>();
@@ -113,6 +126,36 @@ public class DBFacade : IDBFacade
                 int pubDate = reader.GetInt32(2);
 
                 list.Add(new CommentViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
+            }
+            return list;
+        }
+    }
+
+    public List<ProposalViewModel> getProposalList(string sqlQuery, params (string name, object value)[] parameters)
+    {
+        var list = new List<ProposalViewModel>();
+
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+            foreach (var (name, value) in parameters)
+            {
+                command.Parameters.AddWithValue(name, value);
+            }
+
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var dataRecord = (IDataRecord)reader;
+                string name = reader.GetString(0);
+                string text = reader.GetString(1);
+                int pubDate = reader.GetInt32(2);
+
+                list.Add(new ProposalViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
             }
             return list;
         }
