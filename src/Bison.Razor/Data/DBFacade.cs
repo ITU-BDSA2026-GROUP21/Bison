@@ -4,9 +4,11 @@ using Microsoft.Data.Sqlite;
 
 public interface IDBFacade
 {
+    public ObservationViewModel GetObservationByID(int id);
     public List<ObservationViewModel> GetObservations(int page);
     public List<ObservationViewModel> GetObservationsByAuthor(string Author, int page);
-
+    public List<CommentViewModel> GetCommentsByObservationID(int id, int page);
+    public List<ProposalViewModel> GetProposalsByObservationID(int id, int page);
 }
 
 public class DBFacade : IDBFacade
@@ -42,9 +44,16 @@ public class DBFacade : IDBFacade
                         ORDER by o.pub_date desc
                         LIMIT @limit OFFSET @offset";
         return getObservationList(sqlQuery, ("@author", author), ("@limit", limit), ("@offset", offset));
-
     }
 
+    public ObservationViewModel GetObservationByID(int id)
+    {
+        var sqlQuery = @"SELECT u.username, o.text, o.pub_date
+                        FROM observation AS o 
+                        JOIN user AS u ON o.author_id = u.user_id 
+                        WHERE o.observation_id = @id";
+        return GetObservation(sqlQuery, "@id", id);
+    }
     public List<CommentViewModel> GetCommentsByObservationID(int id, int page)
     {
         int offset = page == 1 ? 0 : (page - 1) * 32;
@@ -98,6 +107,32 @@ public class DBFacade : IDBFacade
                 list.Add(new ObservationViewModel(name, text, UnixTimeStampToDateTimeString(pubDate)));
             }
             return list;
+        }
+    }
+
+    public ObservationViewModel GetObservation(string sqlQuery, string name, object value)
+    {
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+            command.Parameters.AddWithValue(name, value);
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var dataRecord = (IDataRecord)reader;
+                string obsName = reader.GetString(0);
+                string text = reader.GetString(1);
+                int pubDate = reader.GetInt32(2);
+
+                return new ObservationViewModel(obsName, text, UnixTimeStampToDateTimeString(pubDate));
+            }
+
+            return null;
         }
     }
 

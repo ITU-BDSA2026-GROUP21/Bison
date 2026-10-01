@@ -15,20 +15,18 @@ create table observation (
 
 drop table if exists comment;
 create table comment (
-  comment_id integer autoincrement,
+  comment_id integer primary key autoincrement,
   observation_id integer references observation(observation_id),
   author_id integer not null,
   text string not null,
-  pub_date integer,
-  primary key(comment_id, observation_id)
-)
+  pub_date integer
+);
 
 drop table if exists proposal;
 create table proposal (
-  proposal_id integer autoincrement,
+  proposal_id integer primary key autoincrement,
   observation_id integer references observation(observation_id),
   author_id integer not null,
   text string not null,
-  pub_date integer,
-  primary key(proposal_id, observation_id)
-)
+  pub_date integer
+);
