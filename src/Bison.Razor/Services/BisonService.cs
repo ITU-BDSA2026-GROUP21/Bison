@@ -2,10 +2,17 @@ using System.Data.Common;
 
 public record ObservationViewModel(string Author, string Message, string Timestamp);
 
+public record CommentViewModel(string Author, string Message, string Timestamp);
+
+public record ProposalViewModel(string Author, string Message, string Timestamp);
+
 public interface IObservationService
 {
+    public ObservationViewModel GetObservationFromID(int id);
     public List<ObservationViewModel> GetObservations(int page);
     public List<ObservationViewModel> GetObservationsFromAuthor(string author, int page);
+    public List<CommentViewModel> GetCommentsFromObservationID(int id, int page);
+    public List<ProposalViewModel> GetProposalsFromObservationID(int id, int page);
 }
 
 public class ObservationService : IObservationService
@@ -17,6 +24,11 @@ public class ObservationService : IObservationService
         this.db = db;
     }
 
+    public ObservationViewModel GetObservationFromID(int id)
+    {
+        return db.GetObservationByID(id);
+    }
+
     public List<ObservationViewModel> GetObservations(int page)
     {
         return db.GetObservations(page);
@@ -26,5 +38,15 @@ public class ObservationService : IObservationService
     {
         // filter by the provided author name
         return db.GetObservationsByAuthor(author, page);
+    }
+
+    public List<CommentViewModel> GetCommentsFromObservationID(int id, int page)
+    {
+        return db.GetCommentsByObservationID(id, page);
+    }
+
+    public List<ProposalViewModel> GetProposalsFromObservationID(int id, int page)
+    {
+        return db.GetProposalsByObservationID(id, page);
     }
 }
