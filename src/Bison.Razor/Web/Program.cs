@@ -3,12 +3,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
-
-var serviceProvider = builder.Services.BuildServiceProvider();
-var context = serviceProvider.GetRequiredService<BisonDBContext>();
-DbInitializer.SeedDatabase(context);
 
 //Commandline for running program after introducing enviromental varible: 
 //BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
@@ -21,8 +16,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IDBFacade>(new DBFacade(dbPath));
 builder.Services.AddSingleton<IObservationService, ObservationService>();
 
-
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
+    DbInitializer.SeedDatabase(context);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
