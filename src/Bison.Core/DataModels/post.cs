@@ -1,8 +1,8 @@
 public class Post
 {
-    public string text { get; set; }
+    public string Text { get; set; }
 
-    public DateTime date { get; set; }
+    public DateTime Date { get; set; }
 
-    public Author author { get; set; }
+    public Author Author { get; set; }
 }
