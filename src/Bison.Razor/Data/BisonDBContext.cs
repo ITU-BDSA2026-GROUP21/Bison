@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 public class BisonDBContext : DbContext
 {
     public DbSet<Observation> Observation { get; set; }
