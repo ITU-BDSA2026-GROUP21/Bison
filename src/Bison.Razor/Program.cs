@@ -18,11 +18,13 @@ builder.Services.AddSingleton<IObservationService, ObservationService>();
 
 var app = builder.Build();
 
+//Commented out the db seeding, until we know that it will work.
+/*
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
     DbInitializer.SeedDatabase(context);
-}
+}*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
