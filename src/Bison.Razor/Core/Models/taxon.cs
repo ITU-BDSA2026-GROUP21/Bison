@@ -4,9 +4,9 @@ public class Taxon
 
     public List<Taxon> Children { get; set; }
 
-    public string dwc_TaxonID { get; set; }
+    public required string dwc_TaxonID { get; set; }
 
-    public string VernacularName { get; set; }
+    public string? VernacularName { get; set; }
 
     public int TaxonId { get; set; }
 }
