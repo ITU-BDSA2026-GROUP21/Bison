@@ -1,5 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
+
 //Commandline for running program after introducing enviromental varible: 
 //BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
 //(This upholds from Bison.Razor directory, it changes depending on which diretory user is in)
