@@ -8,7 +8,7 @@
 }
 
 <div>
-    @if (routeName != null)
+    @if (routeName != null && Model.Observation != null)
     {
         <h1> @mainObs.Author's observation </h1>
         <ul id="observation" class="observations">
