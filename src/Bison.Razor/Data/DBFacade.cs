@@ -86,6 +86,7 @@ public class DBFacade : IDBFacade
 
         using (var connection = new SqliteConnection(dbPath))
         {
+
             connection.Open();
 
             var command = connection.CreateCommand();

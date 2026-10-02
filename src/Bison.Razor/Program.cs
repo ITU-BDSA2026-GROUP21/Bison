@@ -32,3 +32,5 @@ app.MapRazorPages();
 app.MapGet("/", () => Results.Redirect("/obs"));
 
 app.Run();
+
+public partial class Program { }

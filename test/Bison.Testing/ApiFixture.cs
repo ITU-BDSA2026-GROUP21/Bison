@@ -1,4 +1,4 @@
-﻿/* namespace Bison.Testing;
+﻿namespace Bison.Testing;
 
 using System;
 using System.IO;
@@ -10,27 +10,11 @@ public class ApiFixture : WebApplicationFactory<Program>
     {
         //Add environment variables for the test databases?
         Environment.SetEnvironmentVariable(
-        "OBSERVATION_DB_PATH",
-        Path.Combine(
-            AppContext.BaseDirectory,
-            "bison_observe_cli_db_test.csv"));
-
-        Environment.SetEnvironmentVariable(
-            "COMMENT_DB_PATH",
+            "BISONDBPATH",
             Path.Combine(
                 AppContext.BaseDirectory,
-                "bison_comment_cli_db_test.csv"));
-
-        Environment.SetEnvironmentVariable(
-            "PROPOSAL_DB_PATH",
-            Path.Combine(
-                AppContext.BaseDirectory,
-                "bison_proposal_cli_db_test.csv"));
-
-        Environment.SetEnvironmentVariable(
-            "TAXON_DB_PATH",
-            Path.Combine(
-                AppContext.BaseDirectory,
-                "joined.csv"));
+                "bison.db"
+            )
+        );
     }
-}*/
+}
