@@ -1,6 +1,6 @@
 public interface IPostRepository
 {
-    public Task CreatePost(PostDTO newPost);
-    public List<Task> ReadPostsFromUser(string username);
-    public Task UpdatePost(PostDTO alteredPost);
+    public Task<int> CreatePost(Post newPost);
+    public Task<List<Post>> ReadPostsFromUser(string username);
+    public Task UpdatePost(Post alteredPost);
 }
