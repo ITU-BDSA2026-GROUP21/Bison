@@ -5,5 +5,5 @@ public class Author
 
     public ICollection<Post> Posts { get; set; }
 
-    public int Id { get; set; }
+    public int AuthorId { get; set; }
 }

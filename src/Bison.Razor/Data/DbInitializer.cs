@@ -1,6 +1,6 @@
-/*using System;
+using System;
 
-public static class DbInitializer
+/*public static class DbInitializer
 {
     public static void SeedDatabase(BisonDBContext bisonContext)
     {

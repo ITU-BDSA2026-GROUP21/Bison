@@ -1,8 +1,8 @@
-using System.Formats.Tar;
-
 public class Observation : Post
 {
-    public int Id { get; set; }
-
     public Taxon? Taxon { get; set; }
+
+    public ICollection<Comment> Comments { get; set; }
+
+    public ICollection<Proposal> Proposals { get; set; }
 }
