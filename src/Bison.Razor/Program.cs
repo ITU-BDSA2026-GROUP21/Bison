@@ -8,7 +8,7 @@ builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(conne
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var context = serviceProvider.GetRequiredService<BisonDBContext>();
-//DbInitializer.SeedDatabase(context);
+DbInitializer.SeedDatabase(context);
 
 //Commandline for running program after introducing enviromental varible: 
 //BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
