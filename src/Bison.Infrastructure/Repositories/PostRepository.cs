@@ -1,3 +1,5 @@
+// This class may be obsolete with the addition of ObservationRepository
+
 using Microsoft.EntityFrameworkCore;
 
 public class PostRepository : IPostRepository

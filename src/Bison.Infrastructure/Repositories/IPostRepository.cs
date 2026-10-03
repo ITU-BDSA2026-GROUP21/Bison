@@ -1,3 +1,5 @@
+// This interface may be obsolete with the addition of IObservationRepository
+
 public interface IPostRepository
 {
     public Task<int> CreatePost(Post newPost);
