@@ -482,3 +482,8 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# EF CORE GENERATED DB FILES
+*.db
+*.db-shm
+*.db-wal
