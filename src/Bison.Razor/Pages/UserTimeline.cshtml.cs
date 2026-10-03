@@ -5,10 +5,10 @@ namespace Bison.Razor.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly IObservationService _service;
+    private readonly OldIObservationService _service;
     public List<ObservationViewModel> Observations { get; set; }
 
-    public UserTimelineModel(IObservationService service)
+    public UserTimelineModel(OldIObservationService service)
     {
         _service = service;
     }

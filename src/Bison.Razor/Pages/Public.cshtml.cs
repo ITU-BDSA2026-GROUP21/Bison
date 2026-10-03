@@ -5,10 +5,10 @@ namespace Bison.Razor.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly IObservationService _service;
+    private readonly OldIObservationService _service;
     public List<ObservationViewModel> Observations { get; set; }
 
-    public PublicModel(IObservationService service)
+    public PublicModel(OldIObservationService service)
     {
         _service = service;
     }

@@ -5,7 +5,7 @@ namespace Bison.Razor.Pages;
 
 public class ObservationModel : PageModel
 {
-    private readonly IObservationService _service;
+    private readonly OldIObservationService _service;
 
     public List<ObservationViewModel> Observations { get; set; }
 
@@ -15,7 +15,7 @@ public class ObservationModel : PageModel
 
     public List<ProposalViewModel> Proposals { get; set; }
 
-    public ObservationModel(IObservationService service)
+    public ObservationModel(OldIObservationService service)
     {
         _service = service;
     }
