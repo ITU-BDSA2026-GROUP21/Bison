@@ -1,4 +1,4 @@
-public interface IObservationService
+public interface OldIObservationService
 {
     public ObservationViewModel GetObservationFromID(int id);
     public List<ObservationViewModel> GetObservations(int page);
@@ -7,11 +7,11 @@ public interface IObservationService
     public List<ProposalViewModel> GetProposalsFromObservationID(int id, int page);
 }
 
-public class ObservationService : IObservationService
+public class OldObservationService : OldIObservationService
 {
     private readonly IDBFacade db;
 
-    public ObservationService(IDBFacade db)
+    public OldObservationService(IDBFacade db)
     {
         this.db = db;
     }

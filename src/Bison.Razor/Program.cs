@@ -13,8 +13,13 @@ var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH")
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// The two services below are the old ones and should not be added when the pages are ready to move over to EF Core
 builder.Services.AddSingleton<IDBFacade>(new DBFacade(dbPath));
-builder.Services.AddSingleton<IObservationService, ObservationService>();
+builder.Services.AddSingleton<OldIObservationService, OldObservationService>();
+
+// These services are the ones that should be used in the future. They are the ones that rely on EF Core.
+builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
 
 var app = builder.Build();
 
