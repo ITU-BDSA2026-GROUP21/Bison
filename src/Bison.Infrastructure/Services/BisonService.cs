@@ -1,5 +1,3 @@
-using System.Data.Common;
-
 public interface IObservationService
 {
     public ObservationViewModel GetObservationFromID(int id);
