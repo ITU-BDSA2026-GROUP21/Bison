@@ -18,13 +18,13 @@ builder.Services.AddSingleton<IObservationService, ObservationService>();
 
 var app = builder.Build();
 
-//Commented out the db seeding, until we know that it will work.
-/*
+// DB Migrating and seeding, so a fresh copy is created if no Bison.db exists. Bison.db is no longer tracked by git, so for new
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
+    context.Database.Migrate();
     DbInitializer.SeedDatabase(context);
-}*/
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
