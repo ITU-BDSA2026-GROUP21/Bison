@@ -20,6 +20,7 @@ builder.Services.AddSingleton<OldIObservationService, OldObservationService>();
 
 // These services are the ones that should be used in the future. They are the ones that rely on EF Core.
 builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
+builder.Services.AddScoped<IObservationService, ObservationService>();
 
 var app = builder.Build();
 
