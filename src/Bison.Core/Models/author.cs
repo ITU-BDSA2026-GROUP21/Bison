@@ -1,9 +1,7 @@
 public class Author
 {
-    public string Name { get; set; }
-    public string Email { get; set; }
-
-    public ICollection<Post> Posts { get; set; }
-
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+    public ICollection<Post> Posts { get; set; } = new List<Post>();
     public int AuthorId { get; set; }
 }

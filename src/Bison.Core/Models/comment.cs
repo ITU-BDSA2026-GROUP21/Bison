@@ -1,4 +1,4 @@
 public class Comment : Post
 {
-    public Observation Observation { get; set; }
+    public required Observation Observation { get; set; }
 }

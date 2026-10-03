@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Bison.Razor.Migrations
+namespace Bison.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialBisonDBSchema : Migration
+    public partial class NewInitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace Bison.Razor.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ParentTaxonId = table.Column<int>(type: "INTEGER", nullable: true),
                     dwc_TaxonID = table.Column<string>(type: "TEXT", nullable: false),
-                    VernacularName = table.Column<string>(type: "TEXT", nullable: false)
+                    VernacularName = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,7 +53,12 @@ namespace Bison.Razor.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Text = table.Column<string>(type: "TEXT", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false)
+                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Discriminator = table.Column<string>(type: "TEXT", maxLength: 13, nullable: false),
+                    ObservationPostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    TaxonId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Proposal_ObservationPostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Proposal_TaxonId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,12 +69,55 @@ namespace Bison.Razor.Migrations
                         principalTable: "Authors",
                         principalColumn: "AuthorId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_ObservationPostId",
+                        column: x => x.ObservationPostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_Proposal_ObservationPostId",
+                        column: x => x.Proposal_ObservationPostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_Taxons_Proposal_TaxonId",
+                        column: x => x.Proposal_TaxonId,
+                        principalTable: "Taxons",
+                        principalColumn: "TaxonId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_Taxons_TaxonId",
+                        column: x => x.TaxonId,
+                        principalTable: "Taxons",
+                        principalColumn: "TaxonId");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AuthorId",
                 table: "Posts",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_ObservationPostId",
+                table: "Posts",
+                column: "ObservationPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_Proposal_ObservationPostId",
+                table: "Posts",
+                column: "Proposal_ObservationPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_Proposal_TaxonId",
+                table: "Posts",
+                column: "Proposal_TaxonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_TaxonId",
+                table: "Posts",
+                column: "TaxonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Taxons_ParentTaxonId",
@@ -84,10 +132,10 @@ namespace Bison.Razor.Migrations
                 name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "Taxons");
+                name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "Authors");
+                name: "Taxons");
         }
     }
 }

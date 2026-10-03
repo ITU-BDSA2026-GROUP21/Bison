@@ -1,6 +1,5 @@
 public class Proposal : Post
 {
-    public Observation Observation { get; set; }
-
-    public Taxon Taxon { get; set; }
+    public required Observation Observation { get; set; }
+    public required Taxon Taxon { get; set; }
 }
