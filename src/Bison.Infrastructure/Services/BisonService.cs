@@ -1,3 +1,5 @@
+// TEMPORARY: replaced by IObservationService, delete together with DBFacade
+
 public interface OldIObservationService
 {
     public ObservationViewModel GetObservationFromID(int id);
