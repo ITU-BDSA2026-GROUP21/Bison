@@ -5,17 +5,17 @@ namespace Bison.Razor.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly OldIObservationService _service;
-    public List<ObservationViewModel> Observations { get; set; }
+    private readonly IObservationService _service;
+    public List<ReadObservationDTO> Observations { get; set; } = new();
 
-    public UserTimelineModel(OldIObservationService service)
+    public UserTimelineModel(IObservationService service)
     {
         _service = service;
     }
 
-    public ActionResult OnGet(string author, [FromQuery] int page)
+    public async Task<IActionResult> OnGetAsync(string author, [FromQuery] int page = 1)
     {
-        Observations = _service.GetObservationsFromAuthor(author, page);
+        Observations = await _service.GetObservationsByAuthor(author, page);
         return Page();
     }
 }

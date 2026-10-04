@@ -12,15 +12,15 @@
     @if (Model.Observations.Any())
     {
         <ul id="messagelist" class="observations">
-            @foreach (var ob in Model.Observations)
+            @foreach (var obs in Model.Observations)
             {
                 <li>
                     <p>
                         <strong>
-                            <a href="/obs/@ob.Author">@ob.Author</a>
+                            <a href="/obs/@obs.Username">@obs.Username</a>
                         </strong>
-                        @ob.Message
-                        <small>&mdash; @ob.Timestamp</small>
+                        <a href="/ob/@obs.Id">@obs.Text</a>
+                        <small>&mdash; @obs.Timestamp</small>
                     </p>
                 </li>
             }
@@ -28,6 +28,6 @@
     }
     else
     {
-        <em>There are no Observations so far.</em>
+        <em>No Observations found for the user @routeName.</em>
     }
 </div>
