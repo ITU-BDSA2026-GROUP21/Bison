@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
 //Commandline for running program after introducing enviromental varible: 
 //BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
@@ -8,11 +13,20 @@ var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH")
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<IDBFacade>(new DBFacade(dbPath));
-builder.Services.AddSingleton<IObservationService, ObservationService>();
 
+// The old DBFacade and old observation service have been removed and replaced with the services below.
+builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
+builder.Services.AddScoped<IObservationService, ObservationService>();
 
 var app = builder.Build();
+
+// DB Migrating and seeding, so a fresh copy is created if no Bison.db exists. Bison.db is no longer tracked by git, so for new
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
+    context.Database.Migrate();
+    DbInitializer.SeedDatabase(context);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

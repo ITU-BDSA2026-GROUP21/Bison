@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6CA1362D-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Testing", "test\Bison.Testing\Bison.Testing.csproj", "{7B55ABDD-C242-4248-9183-DD293342F2B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Core", "src\Bison.Core\Bison.Core.csproj", "{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Infrastructure", "src\Bison.Infrastructure\Bison.Infrastructure.csproj", "{E7D8EE45-2335-42C8-8168-9691F32C48B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,14 @@ Global
 		{7B55ABDD-C242-4248-9183-DD293342F2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B55ABDD-C242-4248-9183-DD293342F2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B55ABDD-C242-4248-9183-DD293342F2B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7D8EE45-2335-42C8-8168-9691F32C48B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D8EE45-2335-42C8-8168-9691F32C48B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7D8EE45-2335-42C8-8168-9691F32C48B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7D8EE45-2335-42C8-8168-9691F32C48B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{33DB4E0A-B819-40E7-892C-F2514478C12E} = {A1066A64-D5EB-4454-AB33-D4D50A172D12}
 		{7B55ABDD-C242-4248-9183-DD293342F2B5} = {6CA1362D-9603-4452-A239-4D0DAFC4FDF3}
+		{4C778C90-D2F1-4864-B64B-CA5DC0D1D5B1} = {A1066A64-D5EB-4454-AB33-D4D50A172D12}
+		{E7D8EE45-2335-42C8-8168-9691F32C48B9} = {A1066A64-D5EB-4454-AB33-D4D50A172D12}
 	EndGlobalSection
 EndGlobal

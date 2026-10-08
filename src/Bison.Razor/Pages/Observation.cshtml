@@ -1,80 +1,56 @@
-@page "/ob/{id?}"
+@page "/ob/{id:int}"
 @model Bison.Razor.Pages.ObservationModel
 @{
     ViewData["Title"] = "Bison";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("id");
-    var mainObs = Model.Observation;
+    var obs = Model.Observation!;
 }
 
 <div>
-    @if (routeName != null && Model.Observation != null)
-    {
-        <h1> @mainObs.Author's observation </h1>
-        <ul id="observation" class="observations">
+    <h1> @obs.Username's observation </h1>
+    <ul id="observation" class="observations">
+        <li>
+            <p>
+                <strong>
+                    <a href="/obs/@obs.Username">@obs.Username</a>
+                </strong>
+                @obs.Text
+                <small>&mdash; @obs.Timestamp</small>
+            </p>
+        </li>
+    </ul>
+
+    <h2> Comments </h2>
+    <ul id="commentlist" class="observations">
+        @foreach (var com in Model.Comments)
+        {
             <li>
                 <p>
                     <strong>
-                        <a href="/obs/@mainObs.Author">@mainObs.Author</a>
+                        <a href="/obs/@com.Username">@com.Username</a>
                     </strong>
-                    @mainObs.Message
-                    <small>&mdash; @mainObs.Timestamp</small>
+                    @com.Text
+                    <small>&mdash; @com.Timestamp</small>
                 </p>
             </li>
-        </ul>
+        }
+    </ul>
 
-        <h2> Comments </h2>
-        <ul id="commentlist" class="observations">
-            @foreach (var com in Model.Comments)
-            {
-                <li>
-                    <p>
-                        <strong>
-                            <a href="/obs/@com.Author">@com.Author</a>
-                        </strong>
-                        @com.Message
-                        <small>&mdash; @com.Timestamp</small>
-                    </p>
-                </li>
-            }
-        </ul>
+    <h2> Proposals </h2>
+    <ul id="proposalList" class="observations">
+        @foreach (var pro in Model.Proposals)
+        {
+            <li>
+                <p>
+                    <strong>
+                        <a href="/obs/@pro.Username">@pro.Username</a>
+                    </strong>
+                    @pro.Text
+                    <small>@pro.TaxonName</small>
+                    <small>&mdash; @pro.Timestamp</small>
+                </p>
+            </li>
+        }
+    </ul>
 
-        <h2> Proposals </h2>
-        <ul id="proposalList" class="observations">
-            @foreach (var pro in Model.Proposals)
-            {
-                <li>
-                    <p>
-                        <strong>
-                            <a href="/obs/@pro.Author">@pro.Author</a>
-                        </strong>
-                        @pro.Message
-                        <small>&mdash; @pro.Timestamp</small>
-                    </p>
-                </li>
-            }
-        </ul>
-    }
-    else if (Model.Observations.Any())
-    {
-        <h2> Public Timeline </h2>
-        <ul id="messagelist" class="observations">
-            @foreach (var obs in Model.Observations)
-            {
-                <li>
-                    <p>
-                        <strong>
-                            <a href="/obs/@obs.Author">@obs.Author</a>
-                        </strong>
-                        @obs.Message
-                        <small>&mdash; @obs.Timestamp</small>
-                    </p>
-                </li>
-            }
-        </ul>
-    }
-    else
-    {
-        <em>There are no Observations so far.</em>
-    }
 </div>

@@ -7,25 +7,26 @@ public class ObservationModel : PageModel
 {
     private readonly IObservationService _service;
 
-    public List<ObservationViewModel> Observations { get; set; }
+    public ReadObservationDTO? Observation { get; set; }
 
-    public ObservationViewModel Observation { get; set; }
+    public List<ReadCommentDTO> Comments { get; set; } = new();
 
-    public List<CommentViewModel> Comments { get; set; }
-
-    public List<ProposalViewModel> Proposals { get; set; }
+    public List<ReadProposalDTO> Proposals { get; set; } = new();
 
     public ObservationModel(IObservationService service)
     {
         _service = service;
     }
 
-    public ActionResult OnGet(int id, [FromQuery] int page)
+    public async Task<IActionResult> OnGetAsync(int id, [FromQuery] int page = 1)
     {
-        Observation = _service.GetObservationFromID(id);
-        Observations = _service.GetObservations(page);
-        Comments = _service.GetCommentsFromObservationID(id, page);
-        Proposals = _service.GetProposalsFromObservationID(id, page);
+        Observation = await _service.GetObservationById(id);
+        if (Observation == null)
+        {
+            return NotFound();
+        }
+        Comments = await _service.GetComments(id, page);
+        Proposals = await _service.GetProposals(id, page);
         return Page();
     }
 }

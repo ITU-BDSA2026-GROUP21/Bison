@@ -1,12 +1,6 @@
-using System.Data.Common;
+// TEMPORARY: replaced by IObservationService, delete together with DBFacade
 
-public record ObservationViewModel(string Author, string Message, string Timestamp);
-
-public record CommentViewModel(string Author, string Message, string Timestamp);
-
-public record ProposalViewModel(string Author, string Message, string Timestamp);
-
-public interface IObservationService
+public interface OldIObservationService
 {
     public ObservationViewModel GetObservationFromID(int id);
     public List<ObservationViewModel> GetObservations(int page);
@@ -15,11 +9,11 @@ public interface IObservationService
     public List<ProposalViewModel> GetProposalsFromObservationID(int id, int page);
 }
 
-public class ObservationService : IObservationService
+public class OldObservationService : OldIObservationService
 {
     private readonly IDBFacade db;
 
-    public ObservationService(IDBFacade db)
+    public OldObservationService(IDBFacade db)
     {
         this.db = db;
     }
