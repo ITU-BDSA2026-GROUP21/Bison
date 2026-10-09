@@ -3,7 +3,7 @@ class {:extern} Taxon {
 }
 
 class {:extern} Observation {
-    function {:extern} getTaxon(): Taxon
+    function {:extern} GetTaxon(): Taxon
 }
 
 function FilterBy(root: Taxon, obs: seq<Observation>): seq<Observation>
