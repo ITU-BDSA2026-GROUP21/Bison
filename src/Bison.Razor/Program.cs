@@ -5,11 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
-//Commandline for running program after introducing enviromental varible: 
-//BISONDBPATH=../../data/sqlite/tmp/bison.db dotnet run 
-//(This upholds from Bison.Razor directory, it changes depending on which diretory user is in)
-var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH")
-             ?? Path.Combine(Path.GetTempPath(), "bison.db");
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -20,7 +15,8 @@ builder.Services.AddScoped<IObservationService, ObservationService>();
 
 var app = builder.Build();
 
-// DB Migrating and seeding, so a fresh copy is created if no Bison.db exists. Bison.db is no longer tracked by git, so for new
+// DB Migrating and seeding, so a fresh copy is created if no Bison.db exists. Bison.db is no longer tracked by git, 
+// so for a fresh clone on a macbine, this will ensure that the file exists.
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
