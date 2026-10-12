@@ -18,7 +18,7 @@ public class ObservationService : IObservationService
             return null;
         }
 
-        return ToDTO(o);
+        return DTOConverter.ToDTO(o);
     }
     public async Task<List<ReadObservationDTO>> GetObservations(int page)
     {
@@ -27,7 +27,7 @@ public class ObservationService : IObservationService
 
         foreach (Observation o in observations)
         {
-            ReadObservationDTO dto = ToDTO(o);
+            ReadObservationDTO dto = DTOConverter.ToDTO(o);
 
             dtos.Add(dto);
         }
@@ -41,7 +41,7 @@ public class ObservationService : IObservationService
 
         foreach (Observation o in observations)
         {
-            ReadObservationDTO dto = ToDTO(o);
+            ReadObservationDTO dto = DTOConverter.ToDTO(o);
 
             dtos.Add(dto);
         }
@@ -55,7 +55,7 @@ public class ObservationService : IObservationService
 
         foreach (Comment c in comments)
         {
-            ReadCommentDTO dto = ToDTO(c);
+            ReadCommentDTO dto = DTOConverter.ToDTO(c);
 
             dtos.Add(dto);
         }
@@ -69,64 +69,11 @@ public class ObservationService : IObservationService
 
         foreach (Proposal p in proposals)
         {
-            ReadProposalDTO dto = ToDTO(p);
+            ReadProposalDTO dto = DTOConverter.ToDTO(p);
 
             dtos.Add(dto);
         }
 
         return dtos;
-    }
-
-    //Static private methods
-    private static ReadObservationDTO ToDTO(Observation o)
-    {
-        ReadObservationDTO dto = new ReadObservationDTO
-        {
-            Id = o.PostId,
-            Username = o.Author.Name,
-            Text = o.Text,
-            Timestamp = DateTimeToString(o.TimeStamp)
-        };
-
-        return dto;
-    }
-    private static ReadCommentDTO ToDTO(Comment c)
-    {
-        ReadCommentDTO dto = new ReadCommentDTO
-        {
-            Username = c.Author.Name,
-            Text = c.Text,
-            Timestamp = DateTimeToString(c.TimeStamp)
-        };
-
-        return dto;
-    }
-    private static ReadProposalDTO ToDTO(Proposal p)
-    {
-        string name;
-
-        if (p.Taxon.VernacularName == null || p.Taxon.VernacularName == "")
-        {
-            name = "No vernacular name";
-        }
-        else
-        {
-            name = p.Taxon.VernacularName;
-        }
-
-        ReadProposalDTO dto = new ReadProposalDTO
-        {
-            Username = p.Author.Name,
-            Text = p.Text,
-            Timestamp = DateTimeToString(p.TimeStamp),
-            DwcTaxonId = p.Taxon.dwc_TaxonID,
-            TaxonName = name
-        };
-
-        return dto;
-    }
-    private static string DateTimeToString(DateTime t)
-    {
-        return t.ToString(DTFormat, CultureInfo.InvariantCulture);
     }
 }

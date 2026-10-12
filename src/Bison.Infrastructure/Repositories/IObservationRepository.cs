@@ -7,4 +7,5 @@ public interface IObservationRepository
     public Task<List<Observation>> GetObservationsByAuthor(string author, int page);
     public Task<List<Comment>> GetCommentsByObservationID(int observationId, int page);
     public Task<List<Proposal>> GetProposalsByObservationID(int observationId, int page);
+    public Task<List<Observation>> GetAllObservations();
 }
