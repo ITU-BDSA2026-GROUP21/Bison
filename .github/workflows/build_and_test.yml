@@ -4,25 +4,34 @@ run-name: ${{ github.actor }} has pushed or made a pull request, and building an
 on:
   push:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v6
-      with:
-        dotnet-version: 8.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore Bison.sln
+      - name: Restore tools
+        run: dotnet tool restore
 
-    - name: Build
-      run: dotnet build Bison.sln --no-restore
+      - name: Verify Dafny code
+        run: dotnet dafny verify src/Bison.Infrastructure/Dafny/TaxonFilter.dfy
 
-    - name: Test
-      run: dotnet test Bison.sln --no-build --verbosity normal
+      - name: Translate Dafny code
+        run: dotnet dafny translate cs --include-runtime --output src/Bison.Infrastructure/Dafny/Generated/TaxonFilter src/Bison.Infrastructure/Dafny/TaxonFilter.dfy
+
+      - name: Restore dependencies
+        run: dotnet restore Bison.sln
+
+      - name: Build
+        run: dotnet build Bison.sln --no-restore
+
+      - name: Test
+        run: dotnet test Bison.sln --no-build --verbosity normal
