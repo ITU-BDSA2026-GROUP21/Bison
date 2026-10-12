@@ -18,6 +18,12 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install Z3
+        run: |
+          sudo apt update
+          sudo apt install -y z3
+          z3 --version
+
       - name: Restore tools
         run: dotnet tool restore
 
