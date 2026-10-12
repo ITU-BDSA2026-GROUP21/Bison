@@ -1,3 +1,4 @@
+using Bison.Core.Models;
 public interface IObservationRepository
 {
     public Task<Observation?> GetObservationByID(int id);

@@ -1,4 +1,4 @@
-using System.Formats.Asn1;
+namespace Bison.Core.Models;
 
 public class Taxon
 {

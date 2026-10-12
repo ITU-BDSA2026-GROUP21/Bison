@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+namespace Bison.Core.Models;
 
 public class Observation : Post
 {
