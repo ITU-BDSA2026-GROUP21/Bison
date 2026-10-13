@@ -8,6 +8,8 @@ public class PublicModel : PageModel
     private readonly IObservationService _observationService;
     private readonly ITaxonFilterService _taxonFilterService;
     public List<ReadObservationDTO> Observations { get; set; } = new();
+    public int CurrentPage { get; set; }
+    public string? SelectedDwcTaxonId { get; set; }
 
     public PublicModel(IObservationService observationService, ITaxonFilterService taxonFilterService)
     {
@@ -17,13 +19,16 @@ public class PublicModel : PageModel
 
     public async Task<IActionResult> OnGetAsync([FromQuery] string? dwcTaxonId, [FromQuery] int page = 1)
     {
-        if (dwcTaxonId != null)
+        CurrentPage = Math.Max(page, 1);
+
+        if (!string.IsNullOrWhiteSpace(dwcTaxonId))
         {
-            Observations = await _taxonFilterService.GetFilteredObservations(dwcTaxonId, page);
+            SelectedDwcTaxonId = dwcTaxonId;
+            Observations = await _taxonFilterService.GetFilteredObservations(dwcTaxonId, CurrentPage);
         }
         else
         {
-            Observations = await _observationService.GetObservations(page);
+            Observations = await _observationService.GetObservations(CurrentPage);
         }
 
         return Page();
