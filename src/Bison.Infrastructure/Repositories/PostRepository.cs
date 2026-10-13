@@ -1,6 +1,7 @@
 // This class may be obsolete with the addition of ObservationRepository
 
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
 
 public class PostRepository : IPostRepository
 {

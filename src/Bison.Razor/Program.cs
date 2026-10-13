@@ -12,6 +12,8 @@ builder.Services.AddRazorPages();
 // The old DBFacade and old observation service have been removed and replaced with the services below.
 builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
+builder.Services.AddScoped<ITaxonRepository, TaxonRepository>();
+builder.Services.AddScoped<ITaxonFilterService, TaxonFilterService>();
 
 var app = builder.Build();
 

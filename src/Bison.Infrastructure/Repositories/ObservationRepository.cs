@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
 
 public class ObservationRepository : IObservationRepository
 {
     private readonly BisonDBContext _dbContext;
-    private const int PageSize = 32;
+    private const int PageSize = PagingDefaults.PageSize;
     public ObservationRepository(BisonDBContext dbContext)
     {
         _dbContext = dbContext;
@@ -74,6 +75,19 @@ public class ObservationRepository : IObservationRepository
                                         .ThenByDescending(p => p.PostId)
                                         .Skip((page - 1) * PageSize)
                                         .Take(PageSize);
+
+        var result = await query.ToListAsync();
+
+        return result;
+    }
+
+    // Only meant to be used for filtered view!
+    public async Task<List<Observation>> GetAllObservations()
+    {
+        var query = _dbContext.Observations.Include(o => o.Author)
+                                           .Include(o => o.Taxon)
+                                           .OrderByDescending(o => o.TimeStamp)
+                                           .ThenByDescending(o => o.PostId);
 
         var result = await query.ToListAsync();
 

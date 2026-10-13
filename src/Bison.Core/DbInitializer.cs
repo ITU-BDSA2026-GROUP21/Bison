@@ -1,4 +1,5 @@
 using System;
+using Bison.Core.Models;
 
 public static class DbInitializer
 {
