@@ -32,7 +32,7 @@ namespace Bison.Core.Migrations
 
                     b.HasKey("AuthorId");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("Post", b =>
@@ -60,7 +60,7 @@ namespace Bison.Core.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
 
                     b.HasDiscriminator().HasValue("Post");
 
@@ -87,7 +87,7 @@ namespace Bison.Core.Migrations
 
                     b.HasIndex("ParentTaxonId");
 
-                    b.ToTable("Taxons");
+                    b.ToTable("Taxons", (string)null);
                 });
 
             modelBuilder.Entity("Comment", b =>
@@ -128,7 +128,7 @@ namespace Bison.Core.Migrations
 
                     b.HasIndex("TaxonId");
 
-                    b.ToTable("Posts", t =>
+                    b.ToTable("Posts", null, t =>
                         {
                             t.Property("ObservationPostId")
                                 .HasColumnName("Proposal_ObservationPostId");

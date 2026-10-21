@@ -1,3 +1,5 @@
+namespace Bison.Core.Models;
+
 public abstract class Post
 {
     public required string Text { get; set; }

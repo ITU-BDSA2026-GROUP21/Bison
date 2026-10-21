@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
 
 public class BisonDBContext : DbContext
 {

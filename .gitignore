@@ -487,3 +487,6 @@ $RECYCLE.BIN/
 *.db
 *.db-shm
 *.db-wal
+
+# Dafny generated C# code
+src/Bison.Infrastructure/Dafny/Generated/

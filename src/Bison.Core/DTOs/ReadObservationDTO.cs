@@ -4,4 +4,6 @@ public record ReadObservationDTO
     public required string Username { get; init; }
     public required string Text { get; init; }
     public required string Timestamp { get; init; }
+    public string? DwcTaxonId { get; init; }
+    public string? TaxonVernacularName { get; init; }
 }
