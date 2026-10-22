@@ -1,0 +1,4 @@
+# This file is intended to suppress code warnings for the generated dafny code.
+[Generated/*.cs]
+generated_code = true
+dotnet_diagnostic.CS8981.severity = none
