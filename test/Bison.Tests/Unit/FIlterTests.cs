@@ -4,7 +4,7 @@ using Dafny;
 namespace Bison.Tests.Unit;
 
 // TODO: Possibly extract the taxon creation to a helper.
-
+// These tests are for checking the Dafny generated code in Bison.Infrastructure/Dafny/Generated/TaxonFilter.cs
 public class FilterTests
 {
     [Fact]
