@@ -66,7 +66,6 @@ public class DTOConverterTests
         var tEgretta = new Taxon() { TaxonId = 12, dwc_TaxonID = "MSTSNM:Arter:25aaf9f3-f785-ea11-aa77-501ac539d1ea", VernacularName = null, Parent = tArdeidae };
         var tArdea = new Taxon() { TaxonId = 8, dwc_TaxonID = "MSTSNM:Arter:7f9ef9f3-f785-ea11-aa77-501ac539d1ea", VernacularName = null, Parent = tArdeidae };
         var tArdeaAlba = new Taxon() { TaxonId = 25, dwc_TaxonID = "MSTSNM:Arter:c18811f4-f785-ea11-aa77-501ac539d1ea", VernacularName = "Sølvhejre", Parent = tArdea };
-        var tArdeaCinerea = new Taxon() { TaxonId = 26, dwc_TaxonID = "MSTSNM:Arter:c28811f4-f785-ea11-aa77-501ac539d1ea", VernacularName = "Fiskehejre", Parent = tArdea };
         var tEgrettaGarzetta = new Taxon() { TaxonId = 33, dwc_TaxonID = "MSTSNM:Arter:ca4d8cf8-f785-ea11-aa77-501ac539d1ea", VernacularName = "Silkehejre", Parent = tEgretta };
 
 
