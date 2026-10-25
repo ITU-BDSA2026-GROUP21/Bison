@@ -2,7 +2,26 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString;
+
+// If the application is running on our Azure site, the connectionString will be set to be in /home/data,
+// so we can keep data permanently in a predictable directory on the server.
+// If running locally on our machine, it will just follow the DefaultConnection value from appsettings.json,
+// which will create it in the directory where the application is running.
+if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")))
+{
+    var dbDirectory = "/home/data";
+
+    Directory.CreateDirectory(dbDirectory);
+
+    connectionString = $"Data Source={Path.Combine(dbDirectory, "Bison.db")}";
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("DefaultConnection is not configured.");
+}
+
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
 
