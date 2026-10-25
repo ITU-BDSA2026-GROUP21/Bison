@@ -22,12 +22,30 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+      
+      - name: Install Z3
+        run: |
+          sudo apt update
+          sudo apt install -y z3
+          z3 --version
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Verify Dafny code
+        run: dotnet dafny verify src/Bison.Infrastructure/Dafny/TaxonFilter.dfy
+
+      - name: Translate Dafny code
+        run: dotnet dafny translate cs --include-runtime --output src/Bison.Infrastructure/Dafny/Generated/TaxonFilter src/Bison.Infrastructure/Dafny/TaxonFilter.dfy
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build src/Bison.Razor/ --configuration Release
+
+      - name: Test
+        run: dotnet test Bison.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish src/Bison.Razor/ -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
