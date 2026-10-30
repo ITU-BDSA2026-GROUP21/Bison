@@ -1,5 +1,6 @@
 using Bison.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Bison.Core;
 public class TaxonRepository : ITaxonRepository
 {
     private readonly BisonDBContext _dbContext;

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.Models;
+using Bison.Core;
 
 public class ObservationRepository : IObservationRepository
 {

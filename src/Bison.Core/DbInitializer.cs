@@ -1,6 +1,8 @@
 using System;
 using Bison.Core.Models;
 
+namespace Bison.Core;
+
 public static class DbInitializer
 {
     public static void SeedDatabase(BisonDBContext bisonContext)
