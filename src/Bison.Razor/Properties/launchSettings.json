@@ -14,8 +14,7 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5273",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "BISONDBPATH": "../../data/sqlite/tmp/bison.db"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "https": {
