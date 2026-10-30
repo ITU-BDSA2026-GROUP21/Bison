@@ -13,7 +13,7 @@ public class DTOConverterTests
         var tArdeaCinerea = new Taxon() { TaxonId = 26, dwc_TaxonID = "MSTSNM:Arter:c28811f4-f785-ea11-aa77-501ac539d1ea", VernacularName = "Fiskehejre", Parent = tArdea };
 
         // Arrange: Author, copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Observation, copied from DbInitializer
         var o1 = new Observation() { PostId = 1, Author = a1, Taxon = tArdeaCinerea, Text = "Grey heron standing still in the reeds at the lake.", TimeStamp = DateTime.Parse("2023-08-01 07:12:00") };
@@ -38,8 +38,8 @@ public class DTOConverterTests
         var tArdeaCinerea = new Taxon() { TaxonId = 26, dwc_TaxonID = "MSTSNM:Arter:c28811f4-f785-ea11-aa77-501ac539d1ea", VernacularName = "Fiskehejre", Parent = tArdea };
 
         // Arrange: Authors, copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
-        var a2 = new Author() { AuthorId = 2, Name = "Luanna Muro", Email = "Luanna-Muro@ku.dk", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a2 = new Author() { UserName = "Luanna Muro", Email = "Luanna-Muro@ku.dk", Posts = new List<Post>() };
 
         // Arrange: Observation, copied from DbInitializer
         var o1 = new Observation() { PostId = 1, Author = a1, Taxon = tArdeaCinerea, Text = "Grey heron standing still in the reeds at the lake.", TimeStamp = DateTime.Parse("2023-08-01 07:12:00") };
@@ -70,9 +70,9 @@ public class DTOConverterTests
 
 
         // Arrange: Authors, copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
-        var a2 = new Author() { AuthorId = 2, Name = "Luanna Muro", Email = "Luanna-Muro@ku.dk", Posts = new List<Post>() };
-        var a3 = new Author() { AuthorId = 3, Name = "Wendell Ballan", Email = "Wendell-Ballan@gmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a2 = new Author() { UserName = "Luanna Muro", Email = "Luanna-Muro@ku.dk", Posts = new List<Post>() };
+        var a3 = new Author() { UserName = "Wendell Ballan", Email = "Wendell-Ballan@gmail.com", Posts = new List<Post>() };
 
         // Arrange: Observation, copied from DbInitializer
         var o3 = new Observation() { PostId = 3, Author = a3, Taxon = tArdeaAlba, Text = "Large white heron in a wet meadow. Yellow bill, black legs.", TimeStamp = DateTime.Parse("2023-08-02 06:45:00") };

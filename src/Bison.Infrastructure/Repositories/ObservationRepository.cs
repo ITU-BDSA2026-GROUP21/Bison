@@ -39,7 +39,7 @@ public class ObservationRepository : IObservationRepository
         page = Math.Max(page, 1);
 
         var query = _dbContext.Observations.Include(o => o.Author)
-                                           .Where(o => o.Author.Name == author)
+                                           .Where(o => o.Author.UserName == author)
                                            .OrderByDescending(o => o.TimeStamp)
                                            .ThenByDescending(o => o.PostId)
                                            .Skip((page - 1) * PageSize)

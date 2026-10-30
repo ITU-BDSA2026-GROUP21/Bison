@@ -24,7 +24,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarboSinensis };
@@ -64,7 +64,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarboSinensis };
@@ -113,7 +113,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarboSinensis };
@@ -149,7 +149,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarbo };
@@ -182,7 +182,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarboSinensis };
@@ -217,7 +217,7 @@ public class FilterTests
         var tPhalacrocoraxCarboSinensis = new Taxon() { TaxonId = 46, dwc_TaxonID = "MSTSNM:Arter:c4cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Mellemskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "", Taxon = tPhalacrocoraxCarboSinensis };
@@ -251,7 +251,7 @@ public class FilterTests
         var tPhalacrocoraxCarboCarbo = new Taxon() { TaxonId = 45, dwc_TaxonID = "MSTSNM:Arter:c3cdcafa-f785-ea11-aa77-501ac539d1ea", VernacularName = "Storskarv", Parent = tPhalacrocoraxCarbo };
 
         // Arrange: Author copied from DbInitializer
-        var a1 = new Author() { AuthorId = 1, Name = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
+        var a1 = new Author() { UserName = "Roger Histand", Email = "Roger+Histand@hotmail.com", Posts = new List<Post>() };
 
         // Arrange: Create observations
         var p1 = new Observation { Author = a1, Text = "" };
