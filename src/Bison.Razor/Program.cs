@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.Models;
+using Bison.Core;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +29,23 @@ else
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
 // Add Identity services to the container
-builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<BisonDBContext>();
+builder.Services.AddDefaultIdentity<Author>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireDigit = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.User.RequireUniqueEmail = true;
+}).AddEntityFrameworkStores<BisonDBContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Identity/Account/Login";
+    options.ExpireTimeSpan = TimeSpan.FromHours(24);
+    options.SlidingExpiration = true;
+});
 
 // Add pages to the container.
 builder.Services.AddRazorPages();
@@ -63,6 +80,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 //Redirecting the load up page to observations page (Public.cshtml)
