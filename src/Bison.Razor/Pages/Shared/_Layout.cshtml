@@ -15,17 +15,17 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <div>
-                    <a href="/@(User.Identity.Name)">My Observations</a> |
-                    <a href="/">Public Observations</a> |
-                    <a ...>Logout [@(User.Identity.Name)]</a>
+                    <a class="nav-link text-dark" href="/@(User.Identity.Name)">My Observations</a> |
+                    <a class="nav-link text-dark" href="/">Public Observations</a> |
+                    <a class="nav-link text-dark" ...>Logout [@(User.Identity.Name)]</a>
                 </div>
             }
             else
             {
                 <div>
-                    <a href="/">Public Observations</a> |
-                    <a ...>Register</a>
-                    <a ...>Login</a>
+                    <a class="nav-link text-dark" href="/">Public Observations</a> |
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="nav-link text-dark" ...>Login</a>
                 </div>
             }
         </div>
