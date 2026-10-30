@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-public class BisonDBContext : DbContext
+public class BisonDBContext : IdentityDbContext<Author>
 {
     public DbSet<Post> Posts { get; set; }
     public DbSet<Observation> Observations { get; set; }

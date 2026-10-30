@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,12 +23,17 @@ else
         ?? throw new InvalidOperationException("DefaultConnection is not configured.");
 }
 
+// Add BisonDBContext to the container.
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
+// Add Identity services to the container
+builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<BisonDBContext>();
 
-// Add services to the container.
+// Add pages to the container.
 builder.Services.AddRazorPages();
 
+// Add custom services to the container.
 // The old DBFacade and old observation service have been removed and replaced with the services below.
 builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
