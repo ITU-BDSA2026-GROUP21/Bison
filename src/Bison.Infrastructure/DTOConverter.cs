@@ -12,7 +12,8 @@ public static class DTOConverter
             Id = o.PostId,
             Username = o.Author.UserName,
             Text = o.Text,
-            Timestamp = DateTimeToString(o.TimeStamp)
+            Timestamp = DateTimeToString(o.TimeStamp),
+            TaxonVernacularName = o.Taxon.VernacularName
         };
 
         return dto;

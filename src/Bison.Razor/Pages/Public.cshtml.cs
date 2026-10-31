@@ -10,6 +10,7 @@ public class PublicModel : PageModel
     public List<ReadObservationDTO> Observations { get; set; } = new();
     public int CurrentPage { get; set; }
     public string? SelectedDwcTaxonId { get; set; }
+    public List<TaxonDropdownOption> TaxonDropdownOptions { get; set; } = new();
 
     public PublicModel(IObservationService observationService, ITaxonFilterService taxonFilterService)
     {
@@ -20,6 +21,8 @@ public class PublicModel : PageModel
     public async Task<IActionResult> OnGetAsync([FromQuery] string? dwcTaxonId, [FromQuery] int page = 1)
     {
         CurrentPage = Math.Max(page, 1);
+
+        TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
 
         if (!string.IsNullOrWhiteSpace(dwcTaxonId))
         {

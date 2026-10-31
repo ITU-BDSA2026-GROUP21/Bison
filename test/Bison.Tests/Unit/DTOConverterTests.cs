@@ -19,7 +19,7 @@ public class DTOConverterTests
         var o1 = new Observation() { PostId = 1, Author = a1, Taxon = tArdeaCinerea, Text = "Grey heron standing still in the reeds at the lake.", TimeStamp = DateTime.Parse("2023-08-01 07:12:00") };
 
         // Arrange: Create manual DTO to check against
-        var expectedDTO = new ReadObservationDTO { Id = 1, Username = "Roger Histand", Text = "Grey heron standing still in the reeds at the lake.", Timestamp = "08/01/23 7:12:00" };
+        var expectedDTO = new ReadObservationDTO { Id = 1, Username = "Roger Histand", Text = "Grey heron standing still in the reeds at the lake.", Timestamp = "08/01/23 7:12:00", TaxonVernacularName = "Fiskehejre" };
 
         // Act: Call ToDTO to get actual DTO to test
         var actualDTO = DTOConverter.ToDTO(o1);

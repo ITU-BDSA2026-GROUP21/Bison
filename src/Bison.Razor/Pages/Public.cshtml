@@ -9,8 +9,14 @@
     <h2> Public Timeline </h2>
 
     <form method="get">
-        <input type="text" name="dwcTaxonId" value="@Model.SelectedDwcTaxonId" />
-        <button type="submit">Filter</button>
+        <select name="dwcTaxonId" onchange="this.form.submit()">
+            <option value="">All Taxons</option>
+            @foreach (var opt in Model.TaxonDropdownOptions)
+            {
+                <option value="@opt.DwcId" selected="@(opt.DwcId == Model.SelectedDwcTaxonId)">@opt.Label</option>
+            }
+        </select>
+        <noscript><button type="submit">Filter</button></noscript>
     </form>
 
     @if (Model.Observations.Any())
@@ -24,6 +30,10 @@
                             <a href="/obs/@obs.Username">@obs.Username</a>
                         </strong>
                         <a href="/ob/@obs.Id">@obs.Text</a>
+                        @if (obs.TaxonVernacularName != null)
+                        {
+                            <small>&mdash; @obs.TaxonVernacularName</small>
+                        }
                         <small>&mdash; @obs.Timestamp</small>
                     </p>
                 </li>
