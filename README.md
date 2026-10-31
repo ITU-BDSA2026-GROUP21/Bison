@@ -25,4 +25,4 @@ For the team: If you want to manually deploy our application on your own azure a
 
 - Config deploy building tools "az webapp config appsettings delete -g our-resource-group -n our-app-name --setting-names SCM_DO_BUILD_DURING_DEPLOYMENT"
 - Deployment command "az webapp deploy -g our-resource-group -n our-app-name --src-path ../../app.zip --type zip"
-- The Azure
+- The Azure application will not work without setting up the Eduard and Debasmita secrets in the portal. Use the syntax "Seeding\_\_Eduard\_\_Email" instead of colons.
