@@ -14,6 +14,7 @@ public class ObservationRepository : IObservationRepository
     public async Task<Observation?> GetObservationByID(int id)
     {
         var query = _dbContext.Observations.Include(o => o.Author)
+                                           .Include(o => o.Taxon)
                                            .Where(o => o.PostId == id);
 
         var result = await query.FirstOrDefaultAsync();
@@ -25,6 +26,7 @@ public class ObservationRepository : IObservationRepository
         page = Math.Max(page, 1);
 
         var query = _dbContext.Observations.Include(o => o.Author)
+                                           .Include(o => o.Taxon)
                                            .OrderByDescending(o => o.TimeStamp)
                                            .ThenByDescending(o => o.PostId)
                                            .Skip((page - 1) * PageSize)
@@ -40,6 +42,7 @@ public class ObservationRepository : IObservationRepository
         page = Math.Max(page, 1);
 
         var query = _dbContext.Observations.Include(o => o.Author)
+                                           .Include(o => o.Taxon)
                                            .Where(o => o.Author.UserName == author)
                                            .OrderByDescending(o => o.TimeStamp)
                                            .ThenByDescending(o => o.PostId)
