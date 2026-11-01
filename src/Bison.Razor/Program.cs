@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Bison.Core.Models;
 using Bison.Core;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,14 @@ builder.Services.AddDefaultIdentity<Author>(options =>
     options.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<BisonDBContext>();
 
+builder.Services.AddAuthentication()
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["authentication:github:clientId"];
+        options.ClientSecret = builder.Configuration["authentication:github:clientSecret"];
+        options.CallbackPath = "/signin-github";
+    });
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.AccessDeniedPath = "/Identity/Account/Login";
@@ -56,6 +65,9 @@ builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ITaxonRepository, TaxonRepository>();
 builder.Services.AddScoped<ITaxonFilterService, TaxonFilterService>();
+
+builder.Services.AddDistributedMemoryCache(); // where session data is stored
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -124,6 +136,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapRazorPages();
 //Redirecting the load up page to observations page (Public.cshtml)
