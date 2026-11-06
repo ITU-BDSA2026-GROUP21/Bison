@@ -1,0 +1,47 @@
+@using Microsoft.AspNetCore.Identity
+@using Bison.Core.Models;
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
+    
+<details>
+    <summary style="list-style: none; cursor: pointer;">
+        <h3 style="text-decoration: underline;">Post observation</h3>
+    </summary>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="observationbox">
+            <h3>What did you see, @(User.Identity.Name)?</h3>
+            <form method="post">
+
+                <label style="margin-bottom: 8px; display: block;">Write what you have seen:</label>
+                <input style="margin-bottom: 8px; display: block;" type="text">
+                
+                <label style="margin-bottom: 8px; display: block;">What kind of taxon:</label>
+                <!--Can be set as partial view later form is sat to method get here?-->
+                <select style="margin-bottom: 8px; display: block;" name="dwcTaxonId">
+                    <option value="">All Taxons</option>
+                    @foreach (var opt in Model.TaxonDropdownOptions)
+                    {
+                        <option value="@opt.DwcId" selected="@(opt.DwcId == Model.SelectedDwcTaxonId)">@opt.Label</option>
+                    }
+                </select>
+
+                <label style="margin-bottom: 8px; display: block;">Upload photo (optional)</label>
+                <input style="margin-bottom: 8px; display: block;" type="file" />
+
+                <!--Photos later-->
+                
+                <input type="submit" value="Share">
+            </form>
+        </div>
+    }
+    else
+    {
+        <div style="padding-bottom: 4%;">
+            <h4>Log in to add an observation: </h4>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a> |
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </div>
+    }
+</details>
+    

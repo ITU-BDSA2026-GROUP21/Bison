@@ -1,0 +1,42 @@
+@page "/PostObservation"
+
+@using Microsoft.AspNetCore.Identity
+@namespace Bison.Razor.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Bison.Core.Models;
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
+
+@model Bison.Razor.Pages.PostObservation
+@{
+    ViewData["Title"] = "Bison";
+    Layout = "Shared/_Layout";
+}
+    
+
+<h3>Post observation</h3>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="observationbox">
+        <h3>What did you see, @(User.Identity.Name)?</h3>
+        <form method="post" asp-page-handler="PostObservation" enctype="multipart/form-data">
+
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Write what you have seen:</label>
+            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Text" type="text">
+                
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId">What kind of taxon:</label>
+            <!--Can be set as partial view later form is sat to method get here?-->
+            <input style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId" type="number">
+
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Photo">Upload photo (optional)</label>
+            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file" />
+                
+            <input type="submit" value="Share">
+        </form>
+    </div>
+}
+else
+{
+    <p>Please <a asp-page="/Account/Login">log in</a> to post an observation.</p>
+}
+    
