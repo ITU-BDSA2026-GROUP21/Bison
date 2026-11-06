@@ -39,21 +39,16 @@ public class PostObservation : PageModel
             return Page();
         }
 
-        Author? author = await _userManager.GetUserAsync(User);
+        Author author = await _userManager.GetUserAsync(User);
 
         // 2. Access the submitted form values
         string description = Input.Text;
         int taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
-        //_observationService.PostObservation(description, author, taxonId);
-
-        // 3. TODO: Create and save the observation
-        // Use your observation service / database here.
-
-
+        await _observationService.PostObservation(description, author, taxonId);
 
         // 4. Redirect after successful submission
-        return RedirectToPage("/Index");
+        return Redirect("/obs");
     }
 }
