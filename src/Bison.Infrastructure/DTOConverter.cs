@@ -10,9 +10,10 @@ public static class DTOConverter
         ReadObservationDTO dto = new ReadObservationDTO
         {
             Id = o.PostId,
-            Username = o.Author.Name,
+            Username = o.Author.UserName,
             Text = o.Text,
-            Timestamp = DateTimeToString(o.TimeStamp)
+            Timestamp = DateTimeToString(o.TimeStamp),
+            TaxonVernacularName = o.Taxon.VernacularName
         };
 
         return dto;
@@ -21,7 +22,7 @@ public static class DTOConverter
     {
         ReadCommentDTO dto = new ReadCommentDTO
         {
-            Username = c.Author.Name,
+            Username = c.Author.UserName,
             Text = c.Text,
             Timestamp = DateTimeToString(c.TimeStamp)
         };
@@ -43,7 +44,7 @@ public static class DTOConverter
 
         ReadProposalDTO dto = new ReadProposalDTO
         {
-            Username = p.Author.Name,
+            Username = p.Author.UserName,
             Text = p.Text,
             Timestamp = DateTimeToString(p.TimeStamp),
             DwcTaxonId = p.Taxon.dwc_TaxonID,

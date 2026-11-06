@@ -3,6 +3,8 @@ root = true
 
 # C# files
 [*.cs]
+dotnet_diagnostic.CA1502.severity = warning
+dotnet_diagnostic.CA1506.severity = warning
 
 #### Core EditorConfig Options ####
 

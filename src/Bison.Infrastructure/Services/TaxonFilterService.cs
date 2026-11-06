@@ -9,6 +9,24 @@ public class TaxonFilterService : ITaxonFilterService
         _observationRepository = observationRepository;
         _taxonRepository = taxonRepository;
     }
+
+    // The below method returns a list of options for the filtering dropdown.
+    public async Task<List<TaxonDropdownOption>> GetTaxonDropdownOptions()
+    {
+        var taxons = await _taxonRepository.GetTaxons();
+        List<TaxonDropdownOption> options = new();
+
+        foreach (Taxon t in taxons)
+        {
+            if (t.VernacularName != null)
+            {
+                var option = new TaxonDropdownOption { DwcId = t.dwc_TaxonID, Label = t.VernacularName };
+                options.Add(option);
+            }
+        }
+
+        return options;
+    }
     public async Task<List<ReadObservationDTO>> GetFilteredObservations(string dwcTaxonId, int page)
     {
         _ = await _taxonRepository.GetTaxons(); // Makes sure that the Taxon hierarchy is tracked in memory.

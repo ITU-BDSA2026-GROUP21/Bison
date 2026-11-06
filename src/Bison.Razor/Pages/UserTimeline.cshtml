@@ -20,6 +20,10 @@
                             <a href="/obs/@obs.Username">@obs.Username</a>
                         </strong>
                         <a href="/ob/@obs.Id">@obs.Text</a>
+                        @if (obs.TaxonVernacularName != null)
+                        {
+                            <small>&mdash; @obs.TaxonVernacularName</small>
+                        }
                         <small>&mdash; @obs.Timestamp</small>
                     </p>
                 </li>

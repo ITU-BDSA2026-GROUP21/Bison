@@ -1,5 +1,5 @@
 // This class may be obsolete with the addition of ObservationRepository
-
+/*
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.Models;
 
@@ -40,4 +40,4 @@ public class PostRepository : IPostRepository
         await _dbContext.Posts.Where(post => post.PostId == alteredPost.PostId)
                               .ExecuteUpdateAsync(post => post.SetProperty(p => p.Text, alteredPost.Text));
     }
-}
+}*/

@@ -1,3 +1,6 @@
+ /* We've added the single rule below to make sure the page does not shift when the scrollbar appears. */
+html { overflow-y: scroll; }
+
 body {
   background: #eccaca;
   font-family: 'Trebuchet MS', sans-serif;
