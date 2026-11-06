@@ -18,21 +18,6 @@ if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetE
 
     Directory.CreateDirectory(dbDirectory);
 
-    // TODO: REMOVE THIS AFTER THE NEXT SUCCESSFUL DEPLOYMENT!
-    var dbPath = Path.Combine(dbDirectory, "Bison.db");
-
-    // TEMPORARY: Delete existing database files
-    foreach (var path in new[]
-    {
-        dbPath,
-        dbPath + "-wal",
-        dbPath + "-shm"
-    })
-    {
-        if (File.Exists(path))
-            File.Delete(path);
-    }
-
     connectionString = $"Data Source={Path.Combine(dbDirectory, "Bison.db")}";
 }
 else
@@ -88,7 +73,7 @@ var app = builder.Build();
 
 // DB Migrating and seeding, so a fresh copy is created if no Bison.db exists. Bison.db is no longer tracked by git, 
 // so for a fresh clone on a macbine, this will ensure that the file exists. The seeding will only actually happen when 
-// the database is empty of both Authors and Posts. 
+// the database is empty of both Authors and Posts, and Taxons. 
 // Eduard and Debasmita's users are added separately with a check, as if we used the same procedure as in DbInitializer, they wouldn't be created properly, and their
 // passwords would be stored without hashing.
 using (var scope = app.Services.CreateScope())
