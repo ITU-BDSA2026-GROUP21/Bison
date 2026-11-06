@@ -97,4 +97,28 @@ public class ObservationRepository : IObservationRepository
 
         return result;
     }
+
+    public async Task<int> MakeObservation(string text, Author author, int? taxonId)
+    {
+        Taxon? taxon = null;
+        if (taxonId is not null)
+        {
+            taxon = await _dbContext.Taxons.FindAsync(taxonId.Value)
+            ?? throw new ArgumentException("Taxon id is not in the database");
+        }
+
+        var observation = new Observation
+        {
+            Text = text,
+            Author = author,
+            TimeStamp = DateTime.UtcNow,
+            Taxon = taxon,
+        };
+
+        _dbContext.Add(observation);
+        await _dbContext.SaveChangesAsync();
+
+        return observation.PostId;
+
+    }
 }
