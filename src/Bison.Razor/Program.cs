@@ -18,6 +18,21 @@ if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetE
 
     Directory.CreateDirectory(dbDirectory);
 
+    // TODO: REMOVE THIS AFTER THE NEXT SUCCESSFUL DEPLOYMENT!
+    var dbPath = Path.Combine(dbDirectory, "Bison.db");
+
+    // TEMPORARY: Delete existing database files
+    foreach (var path in new[]
+    {
+        dbPath,
+        dbPath + "-wal",
+        dbPath + "-shm"
+    })
+    {
+        if (File.Exists(path))
+            File.Delete(path);
+    }
+
     connectionString = $"Data Source={Path.Combine(dbDirectory, "Bison.db")}";
 }
 else
