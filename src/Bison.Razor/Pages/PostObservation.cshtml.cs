@@ -46,7 +46,7 @@ public class PostObservation : PageModel
         int taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
-        _observationService.PostObservation(description, author, taxonId);
+        //_observationService.PostObservation(description, author, taxonId);
 
         // 3. TODO: Create and save the observation
         // Use your observation service / database here.
