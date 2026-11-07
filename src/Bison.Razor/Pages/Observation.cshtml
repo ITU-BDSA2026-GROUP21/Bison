@@ -1,4 +1,5 @@
 @page "/ob/{id:int}"
+@using Microsoft.AspNetCore.Identity;
 @model Bison.Razor.Pages.ObservationModel
 @{
     ViewData["Title"] = "Bison";
@@ -25,6 +26,13 @@
     </ul>
 
     <h2> Comments </h2>
+    @if (User.Identity.IsAuthenticated) {
+        <form class="commentbox" method="post" asp-page-handler="PostComment">
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Leave a comment:</label>
+            <input style="float: left;" type="text" asp-for="Input.Text" />
+            <input type="submit" value="Share">
+        </form>
+    }
     <ul id="commentlist" class="observations">
         @foreach (var com in Model.Comments)
         {
@@ -39,6 +47,8 @@
             </li>
         }
     </ul>
+
+    <br/>
 
     <h2> Proposals </h2>
     <ul id="proposalList" class="observations">
