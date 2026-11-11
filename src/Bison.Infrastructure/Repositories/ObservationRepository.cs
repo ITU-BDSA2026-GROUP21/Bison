@@ -83,6 +83,7 @@ public class ObservationRepository : IObservationRepository
         {
             Text = text,
             Author = author,
+            TimeStamp = DateTime.UtcNow,
             Observation = observation,
         } ;
 

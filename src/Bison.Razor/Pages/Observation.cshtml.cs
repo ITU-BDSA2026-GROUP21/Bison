@@ -56,6 +56,12 @@ public class ObservationModel : PageModel
         {
             throw new Exception("The comment is missing an observation");
         }
+        //Might be a different solution
+        if (Input.Text == null)
+        {
+            //If no comment is entered the rest of the code should not run
+            return Redirect(""+id);
+        }
 
         Author author = await _userManager.GetUserAsync(User);
 
