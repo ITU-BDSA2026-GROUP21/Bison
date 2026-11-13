@@ -6,6 +6,6 @@ public interface IObservationService
     public Task<List<ReadObservationDTO>> GetObservationsByAuthor(string author, int page);
     public Task<List<ReadCommentDTO>> GetComments(int observationId, int page);
     public Task<List<ReadProposalDTO>> GetProposals(int observationId, int page);
-    public Task<int> PostObservation(string text, Author author, int? taxonId);
+    public Task<int> PostObservation(string text, Author author, string? taxonId);
     public Task<int> PostComment(string text, Author author, int id);
 }
