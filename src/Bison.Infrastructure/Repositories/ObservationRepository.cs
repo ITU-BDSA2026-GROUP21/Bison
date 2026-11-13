@@ -74,7 +74,7 @@ public class ObservationRepository : IObservationRepository
 
         Observation? observation = await _dbContext.Observations.FindAsync(id);
 
-        if(observation == null)
+        if (observation == null)
         {
             throw new Exception("There is no observation id for the comment");
         }
@@ -85,7 +85,7 @@ public class ObservationRepository : IObservationRepository
             Author = author,
             TimeStamp = DateTime.UtcNow,
             Observation = observation,
-        } ;
+        };
 
         _dbContext.Comments.Add(comment);
         await _dbContext.SaveChangesAsync();
@@ -123,12 +123,12 @@ public class ObservationRepository : IObservationRepository
         return result;
     }
 
-    public async Task<int> MakeObservation(string text, Author author, int? taxonId)
+    public async Task<int> MakeObservation(string text, Author author, string? taxonId)
     {
         Taxon? taxon = null;
-        if (taxonId is not null)
+        if (!string.IsNullOrWhiteSpace(taxonId))
         {
-            taxon = await _dbContext.Taxons.FindAsync(taxonId.Value)
+            taxon = await _dbContext.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId)
             ?? throw new ArgumentException("Taxon id is not in the database");
         }
 

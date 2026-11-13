@@ -12,15 +12,19 @@
         <a href="/PostObservation">Post observation</a>
     </h3>
 
+
     <form method="get">
-        <select name="dwcTaxonId" onchange="this.form.submit()">
-            <option value="">All Taxons</option>
-            @foreach (var opt in Model.TaxonDropdownOptions)
-            {
-                <option value="@opt.DwcId" selected="@(opt.DwcId == Model.SelectedDwcTaxonId)">@opt.Label</option>
-            }
-        </select>
-        <noscript><button type="submit">Filter</button></noscript>
+        <partial name="_TaxonDropdown" model="@(new Bison.Razor.Pages.TaxonDropdown
+                 {
+                     TaxonDropdownOptions = Model.TaxonDropdownOptions,
+                     SelectedDwcTaxonId = Model.SelectedDwcTaxonId,
+                     Name = "dwcTaxonId",
+                     AutoSubmit = true
+                 })" />
+
+        <noscript>
+            <button type="submit">Filter</button>
+        </noscript>
     </form>
 
     @if (Model.Observations.Any())

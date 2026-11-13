@@ -26,7 +26,16 @@
                 
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId">What kind of taxon:</label>
             <!--Can be set as partial view later form is sat to method get here?-->
-            <input style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId" type="number">
+            <!--<input style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId" type="number">-->
+
+            <partial name="_TaxonDropdown" asp-for="Input.TaxonId" model="@(new Bison.Razor.Pages.TaxonDropdown
+                     {
+                         TaxonDropdownOptions = Model.TaxonDropdownOptions,
+                         SelectedDwcTaxonId = Model.Input.TaxonId,
+                         Name = "Input.TaxonId",
+                         Placeholder = "Select a taxon",
+                         AutoSubmit = false
+                     })" />
 
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.Photo">Upload photo (optional)</label>
             <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file"
