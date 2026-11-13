@@ -68,6 +68,31 @@ public class ObservationRepository : IObservationRepository
 
         return result;
     }
+
+    public async Task<int> MakeComment(string text, Author author, int id)
+    {
+
+        Observation? observation = await _dbContext.Observations.FindAsync(id);
+
+        if(observation == null)
+        {
+            throw new Exception("There is no observation id for the comment");
+        }
+
+        var comment = new Comment
+        {
+            Text = text,
+            Author = author,
+            TimeStamp = DateTime.UtcNow,
+            Observation = observation,
+        } ;
+
+        _dbContext.Comments.Add(comment);
+        await _dbContext.SaveChangesAsync();
+
+        return comment.PostId;
+    }
+
     public async Task<List<Proposal>> GetProposalsByObservationID(int observationId, int page)
     {
         page = Math.Max(page, 1);
@@ -96,5 +121,29 @@ public class ObservationRepository : IObservationRepository
         var result = await query.ToListAsync();
 
         return result;
+    }
+
+    public async Task<int> MakeObservation(string text, Author author, int? taxonId)
+    {
+        Taxon? taxon = null;
+        if (taxonId is not null)
+        {
+            taxon = await _dbContext.Taxons.FindAsync(taxonId.Value)
+            ?? throw new ArgumentException("Taxon id is not in the database");
+        }
+
+        var observation = new Observation
+        {
+            Text = text,
+            Author = author,
+            TimeStamp = DateTime.UtcNow,
+            Taxon = taxon,
+        };
+
+        _dbContext.Observations.Add(observation);
+        await _dbContext.SaveChangesAsync();
+
+        return observation.PostId;
+
     }
 }

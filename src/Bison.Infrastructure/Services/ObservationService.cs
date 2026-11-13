@@ -76,4 +76,14 @@ public class ObservationService : IObservationService
 
         return dtos;
     }
+
+    public async Task<int> PostObservation(string text, Author author, int? taxonId)
+    {
+        return await _repository.MakeObservation(text, author, taxonId);
+    }
+
+    public async Task<int> PostComment(string text, Author author, int id)
+    {
+        return await _repository.MakeComment(text, author, id);
+    }
 }
