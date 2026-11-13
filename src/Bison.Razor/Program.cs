@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 string connectionString;
+string imageDirectoryString;
 
 // If the application is running on our Azure site, the connectionString will be set to be in /home/data,
 // so we can keep data permanently in a predictable directory on the server.
 // If running locally on our machine, it will just follow the DefaultConnection value from appsettings.json,
 // which will create it in the directory where the application is running.
+// TODO: Change this so it's primarily handled in appsettings.json!
 if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")))
 {
     var dbDirectory = "/home/data";
+    imageDirectoryString = "/home/data/uploads";
 
     Directory.CreateDirectory(dbDirectory);
+    Directory.CreateDirectory(imageDirectoryString);
 
     connectionString = $"Data Source={Path.Combine(dbDirectory, "Bison.db")}";
 }
@@ -24,7 +28,14 @@ else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("DefaultConnection is not configured.");
+
+    imageDirectoryString = builder.Configuration.GetConnectionString("ImagePath")
+        ?? throw new InvalidOperationException("Image path is not configured");
+
+    Directory.CreateDirectory(imageDirectoryString);
 }
+
+// TODO: Figure out a way to add the image file path as a value to use in the services with DI.
 
 // Add BisonDBContext to the container.
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));

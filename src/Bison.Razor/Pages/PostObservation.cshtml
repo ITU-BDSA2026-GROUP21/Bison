@@ -29,7 +29,8 @@
             <input style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId" type="number">
 
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.Photo">Upload photo (optional)</label>
-            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file" />
+            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file"
+                   accept=".png, .jpg, .jpeg, .webp" />
                 
             <input type="submit" value="Share">
         </form>
