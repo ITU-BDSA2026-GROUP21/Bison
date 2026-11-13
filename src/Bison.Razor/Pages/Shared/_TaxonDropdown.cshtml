@@ -1,0 +1,13 @@
+@model Bison.Razor.Pages.TaxonDropdown
+
+<select name="@Model.Name" onchange="@(Model.AutoSubmit ? "this.form.submit()" : null)">
+
+    <option value="">@Model.Placeholder</option>
+
+    @foreach (var opt in Model.TaxonDropdownOptions)
+    {
+        <option value="@opt.DwcId" selected="@(opt.DwcId == Model.SelectedDwcTaxonId)">
+            @opt.Label
+        </option>
+    }
+</select>
