@@ -93,7 +93,7 @@ public class ObservationRepository : IObservationRepository
         return comment.PostId;
     }
 
-    public async Task<int> MakeProposal(string text, Author author, int id, Taxon taxon)
+    public async Task<int> MakeProposal(string text, Author author, int id, string? taxonId)
     {
         Observation? observation = await _dbContext.Observations.FindAsync(id);
 
@@ -102,13 +102,20 @@ public class ObservationRepository : IObservationRepository
             throw new Exception("There is no observation id for the proposal");
         }
 
+        Taxon? taxon = null;
+        if (!string.IsNullOrWhiteSpace(taxonId))
+        {
+            taxon = await _dbContext.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId)
+            ?? throw new ArgumentException("Taxon id is not in the database");
+        }
+
         var proposal = new Proposal
         {
             Text = text,
             Author = author,
             TimeStamp = DateTime.UtcNow,
             Observation = observation,
-            Taxon = taxon
+            Taxon = taxon,
         };
 
         _dbContext.Proposals.Add(proposal);

@@ -29,8 +29,8 @@
     @if (User.Identity.IsAuthenticated)
     {
         <form class="commentbox" method="post" asp-page-handler="PostComment">
-            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Leave a comment:</label>
-            <input style="float: left;" type="text" asp-for="Input.Text" />
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.CommentText">Leave a comment:</label>
+            <input style="float: left;" type="text" asp-for="Input.CommentText" />
             <input type="submit" value="Share">
         </form>
     }
@@ -55,8 +55,18 @@
     @if (User.Identity.IsAuthenticated)
     {
         <form class="proposalBox" method="post" asp-page-handler="PostProposal">
-            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Make a proposal:</label>
-            <input style="float: left;" type="text" asp-for="Input.Text" />
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.ProposalText">Make a proposal:</label>
+            <input style="margin-bottom: 8px; display: block;" type="text" asp-for="Input.ProposalText" />
+
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.TaxonId">Proposed taxon:</label>
+            <partial name="_TaxonDropdown" asp-for="Input.TaxonId" model="@(new Bison.Razor.Pages.TaxonDropdown
+                     {
+                         TaxonDropdownOptions = Model.TaxonDropdownOptions,
+                         SelectedDwcTaxonId = Model.SelectedDwcTaxonId,
+                         Name = "dwcTaxonId",
+                         AutoSubmit = false
+                     })" />
+
             <input type="submit" value="Share">
         </form>
     }

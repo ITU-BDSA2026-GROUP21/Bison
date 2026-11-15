@@ -11,5 +11,5 @@ public interface IObservationRepository
     public Task<int> MakeObservation(string text, Author author, string? taxonId);
     public Task<int> MakeComment(string text, Author author, int id);
 
-    public Task<int> MakeProposal(string text, Author author, int id, Taxon taxon);
+    public Task<int> MakeProposal(string text, Author author, int id, string? taxonId);
 }
