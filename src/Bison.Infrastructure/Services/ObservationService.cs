@@ -4,10 +4,12 @@ using Bison.Core.Models;
 public class ObservationService : IObservationService
 {
     private readonly IObservationRepository _repository;
+    private readonly IPhotoService _photoService;
     private const string DTFormat = "MM/dd/yy H:mm:ss";
-    public ObservationService(IObservationRepository repository)
+    public ObservationService(IObservationRepository repository, IPhotoService photoService)
     {
         _repository = repository;
+        _photoService = photoService;
     }
     public async Task<ReadObservationDTO?> GetObservationById(int id)
     {
@@ -77,9 +79,17 @@ public class ObservationService : IObservationService
         return dtos;
     }
 
-    public async Task<int> PostObservation(string text, Author author, string? taxonId)
+    public async Task<int> PostObservation(string text, Author author, string? taxonId, Stream? photo = null)
     {
-        return await _repository.MakeObservation(text, author, taxonId);
+        if (photo != null)
+        {
+            string photoName = await _photoService.UploadPhotoAsync(photo);
+            return await _repository.MakeObservation(text, author, taxonId, photoName);
+        }
+        else
+        {
+            return await _repository.MakeObservation(text, author, taxonId);
+        }
     }
 
     public async Task<int> PostComment(string text, Author author, int id)

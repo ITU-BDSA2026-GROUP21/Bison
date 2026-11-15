@@ -64,7 +64,15 @@ public class PostObservation : PageModel
         //string? taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
-        await _observationService.PostObservation(description, author, taxonId);
+        if (photo != null)
+        {
+            using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
+            await _observationService.PostObservation(description, author, taxonId, photoStream);
+        }
+        else
+        {
+            await _observationService.PostObservation(description, author, taxonId);
+        }
 
         // 4. Redirect after successful submission
         return Redirect("/obs");
