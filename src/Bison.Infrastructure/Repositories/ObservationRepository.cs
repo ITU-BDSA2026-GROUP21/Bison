@@ -93,6 +93,30 @@ public class ObservationRepository : IObservationRepository
         return comment.PostId;
     }
 
+    public async Task<int> MakeProposal(string text, Author author, int id, Taxon taxon)
+    {
+        Observation? observation = await _dbContext.Observations.FindAsync(id);
+
+        if (observation == null)
+        {
+            throw new Exception("There is no observation id for the proposal");
+        }
+
+        var proposal = new Proposal
+        {
+            Text = text,
+            Author = author,
+            TimeStamp = DateTime.UtcNow,
+            Observation = observation,
+            Taxon = taxon
+        };
+
+        _dbContext.Proposals.Add(proposal);
+        await _dbContext.SaveChangesAsync();
+
+        return proposal.PostId;
+    }
+
     public async Task<List<Proposal>> GetProposalsByObservationID(int observationId, int page)
     {
         page = Math.Max(page, 1);

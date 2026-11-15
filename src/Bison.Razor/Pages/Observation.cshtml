@@ -26,7 +26,8 @@
     </ul>
 
     <h2> Comments </h2>
-    @if (User.Identity.IsAuthenticated) {
+    @if (User.Identity.IsAuthenticated)
+    {
         <form class="commentbox" method="post" asp-page-handler="PostComment">
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Leave a comment:</label>
             <input style="float: left;" type="text" asp-for="Input.Text" />
@@ -48,9 +49,17 @@
         }
     </ul>
 
-    <br/>
+    <br />
 
     <h2> Proposals </h2>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form class="proposalBox" method="post" asp-page-handler="PostProposal">
+            <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Make a proposal:</label>
+            <input style="float: left;" type="text" asp-for="Input.Text" />
+            <input type="submit" value="Share">
+        </form>
+    }
     <ul id="proposalList" class="observations">
         @foreach (var pro in Model.Proposals)
         {
