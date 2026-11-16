@@ -490,3 +490,6 @@ $RECYCLE.BIN/
 
 # Dafny generated C# code
 src/Bison.Infrastructure/Dafny/Generated/
+
+# Locally uploaded images
+src/Bison.Razor/wwwroot/uploads

@@ -64,6 +64,7 @@ public class PostObservation : PageModel
         //string? taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
+        // 3. Check if a photo has been uploaded. If yes, call PostObservation with an additional Stream.
         if (photo != null)
         {
             using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.

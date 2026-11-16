@@ -83,8 +83,18 @@ public class ObservationService : IObservationService
     {
         if (photo != null)
         {
+            // Upload photo and get the returned photo name
             string photoName = await _photoService.UploadPhotoAsync(photo);
-            return await _repository.MakeObservation(text, author, taxonId, photoName);
+
+            try
+            {
+                return await _repository.MakeObservation(text, author, taxonId, photoName);
+            }
+            catch (Exception) // If the observation failed to be saved by the repository, delete the photo and rethrow the caught exception.
+            {
+                _photoService.DeletePhoto(photoName);
+                throw;
+            }
         }
         else
         {
