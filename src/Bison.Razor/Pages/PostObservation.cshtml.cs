@@ -64,15 +64,26 @@ public class PostObservation : PageModel
         //string? taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
-        // 3. Check if a photo has been uploaded. If yes, call PostObservation with an additional Stream.
-        if (photo != null)
+        try // Handle the actual creation of the observation in a try-catch to handle image upload errors more gracefully
         {
-            using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
-            await _observationService.PostObservation(description, author, taxonId, photoStream);
+            // 3. Check if a photo has been uploaded. If yes, call PostObservation with an additional Stream.
+            if (photo != null)
+            {
+                using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
+                await _observationService.PostObservation(description, author, taxonId, photoStream);
+            }
+            else
+            {
+                await _observationService.PostObservation(description, author, taxonId);
+            }
         }
-        else
+        catch (ArgumentException ex)
         {
-            await _observationService.PostObservation(description, author, taxonId);
+            ModelState.AddModelError("Input.Photo", ex.Message);
+
+            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
+
+            return Page();
         }
 
         // 4. Redirect after successful submission

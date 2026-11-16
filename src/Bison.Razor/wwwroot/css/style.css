@@ -207,7 +207,8 @@ ul.message li {
   font-size: 13px;
 }
 
-div.error {
+div.error,
+span.error {
   margin: 10px 0;
   background: #FAE4E4;
   border: 1px solid #DD6F6F;
