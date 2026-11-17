@@ -1,5 +1,18 @@
- /* We've added the single rule below to make sure the page does not shift when the scrollbar appears. */
+ /* We've added the rule below to make sure the page does not shift when the scrollbar appears. */
 html { overflow-y: scroll; }
+
+ /* We've also added this rule to better fit observation images on the observation detail page.*/
+img.observation-photo {
+    display: block;
+    float: none;
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-top: 10px;
+    object-fit: contain;
+}
 
 body {
   background: #eccaca;
@@ -145,7 +158,8 @@ div.page ul.observations p {
   margin: 0;
 }
 
-div.page ul.observations li img {
+/* This rule has been slightly modified to not hit the observation-photo class. */
+div.page ul.observations li img:not(.observation-photo) {
   float: left;
   padding: 0 10px 0 0;
 }

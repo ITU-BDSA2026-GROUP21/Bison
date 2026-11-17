@@ -22,11 +22,18 @@
                 }
                 <small>&mdash; @obs.Timestamp</small>
             </p>
+
+            <!--This is for showing the optional photo for an observation.-->
+            @if (!string.IsNullOrEmpty(obs.PicturePath))
+            {
+                <img class="observation-photo" src="@($"/photos/{obs.PicturePath}")" alt="Photo for this observation." />
+            }
         </li>
     </ul>
 
     <h2> Comments </h2>
-    @if (User.Identity.IsAuthenticated) {
+    @if (User.Identity.IsAuthenticated)
+    {
         <form class="commentbox" method="post" asp-page-handler="PostComment">
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.Text">Leave a comment:</label>
             <input style="float: left;" type="text" asp-for="Input.Text" />
@@ -48,7 +55,7 @@
         }
     </ul>
 
-    <br/>
+    <br />
 
     <h2> Proposals </h2>
     <ul id="proposalList" class="observations">
