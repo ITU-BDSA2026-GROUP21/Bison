@@ -21,7 +21,6 @@ if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetE
     imageDirectoryString = "/home/data/uploads";
 
     Directory.CreateDirectory(dbDirectory);
-    Directory.CreateDirectory(imageDirectoryString);
 
     connectionString = $"Data Source={Path.Combine(dbDirectory, "Bison.db")}";
 }
@@ -33,8 +32,13 @@ else
     imageDirectoryString = builder.Configuration.GetConnectionString("ImagePath")
         ?? throw new InvalidOperationException("Image path is not configured");
 
-    Directory.CreateDirectory(imageDirectoryString);
 }
+
+// Normalize imageDirectoryString so the static file middleware gets the entire path on both local machines and on azure.
+imageDirectoryString = Path.GetFullPath(imageDirectoryString);
+
+// Then create the actual directory where the uploaded images will be stored.
+Directory.CreateDirectory(imageDirectoryString);
 
 // Add BisonDBContext to the container.
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
@@ -144,7 +148,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// Add an additional endpoint for serving the uploaded images. This essentialy handles what an image serving method in PhotoService would do.
+// Add an additional static file middleware for serving the uploaded observation images. This essentialy handles what an image serving method in PhotoService would do.
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(imageDirectoryString), // Define the actual file path for finding images
