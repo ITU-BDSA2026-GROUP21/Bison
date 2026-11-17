@@ -86,4 +86,9 @@ public class ObservationService : IObservationService
     {
         return await _repository.MakeComment(text, author, id);
     }
+
+    public async Task<int> PostProposal(string text, Author author, int id, string? taxonId)
+    {
+        return await _repository.MakeProposal(text, author, id, taxonId);
+    }
 }

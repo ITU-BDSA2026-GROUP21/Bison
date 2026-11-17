@@ -8,4 +8,6 @@ public interface IObservationService
     public Task<List<ReadProposalDTO>> GetProposals(int observationId, int page);
     public Task<int> PostObservation(string text, Author author, string? taxonId);
     public Task<int> PostComment(string text, Author author, int id);
+
+    public Task<int> PostProposal(string text, Author author, int id, string? taxonId);
 }
