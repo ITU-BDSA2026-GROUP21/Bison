@@ -3,6 +3,7 @@ using Bison.Core.Models;
 using Bison.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -144,6 +145,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Add an additional endpoint for serving the uploaded images. This essentialy handles what an image serving method in PhotoService would do.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imageDirectoryString), // Define the actual file path for finding images
+    RequestPath = "/photos", // Define the endpoint we'll actually use on the pages to access the images. 
+                             // Doing it this way makes the pages not care whether it's running locally, using wwwroot/uploads, or the path we use in Azure.
+    OnPrepareResponse = context =>
+    {
+        context.Context.Response.Headers.XContentTypeOptions = "nosniff"; // Add a security header that tells browsers not to guess the file type, 
+                                                                          // but to respect the declared MIME type. In our case that's "image/<the specific image type>"
+    }
+});
 
 app.UseRouting();
 app.UseAuthentication();
