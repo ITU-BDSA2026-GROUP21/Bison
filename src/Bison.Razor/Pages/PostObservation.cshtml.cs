@@ -7,6 +7,8 @@ using Bison.Core.Models;
 namespace Bison.Razor.Pages;
 
 [Authorize]
+[RequestSizeLimit(11 * 1024 * 1024)]
+[RequestFormLimits(MultipartBodyLengthLimit = 10 * 1024 * 1024)]
 public class PostObservation : PageModel
 {
 
