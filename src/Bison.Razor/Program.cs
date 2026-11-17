@@ -36,8 +36,6 @@ else
     Directory.CreateDirectory(imageDirectoryString);
 }
 
-// TODO: Figure out a way to add the image file path as a value to use in the services with DI.
-
 // Add BisonDBContext to the container.
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
 
