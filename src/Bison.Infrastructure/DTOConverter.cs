@@ -13,7 +13,8 @@ public static class DTOConverter
             Username = o.Author.UserName,
             Text = o.Text,
             Timestamp = DateTimeToString(o.TimeStamp),
-            TaxonVernacularName = o.Taxon.VernacularName
+            TaxonVernacularName = o.Taxon.VernacularName,
+            PicturePath = o.PicturePath
         };
 
         return dto;

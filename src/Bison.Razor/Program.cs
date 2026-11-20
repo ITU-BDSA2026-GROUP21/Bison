@@ -3,18 +3,22 @@ using Bison.Core.Models;
 using Bison.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string connectionString;
+string imageDirectoryString;
 
 // If the application is running on our Azure site, the connectionString will be set to be in /home/data,
 // so we can keep data permanently in a predictable directory on the server.
 // If running locally on our machine, it will just follow the DefaultConnection value from appsettings.json,
 // which will create it in the directory where the application is running.
+// TODO: Change this so it's primarily handled in appsettings.json!
 if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")))
 {
     var dbDirectory = "/home/data";
+    imageDirectoryString = "/home/data/uploads";
 
     Directory.CreateDirectory(dbDirectory);
 
@@ -24,7 +28,17 @@ else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("DefaultConnection is not configured.");
+
+    imageDirectoryString = builder.Configuration.GetConnectionString("ImagePath")
+        ?? throw new InvalidOperationException("Image path is not configured");
+
 }
+
+// Normalize imageDirectoryString so the static file middleware gets the entire path on both local machines and on azure.
+imageDirectoryString = Path.GetFullPath(imageDirectoryString);
+
+// Then create the actual directory where the uploaded images will be stored.
+Directory.CreateDirectory(imageDirectoryString);
 
 // Add BisonDBContext to the container.
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite(connectionString));
@@ -65,6 +79,7 @@ builder.Services.AddScoped<IObservationRepository, ObservationRepository>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ITaxonRepository, TaxonRepository>();
 builder.Services.AddScoped<ITaxonFilterService, TaxonFilterService>();
+builder.Services.AddScoped<IPhotoService>(sp => new PhotoService(imageDirectoryString)); // Using a lambda function to explicitly tell the service provicer what service to use.
 
 builder.Services.AddDistributedMemoryCache(); // where session data is stored
 builder.Services.AddSession();
@@ -132,6 +147,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Add an additional static file middleware for serving the uploaded observation images. This essentialy handles what an image serving method in PhotoService would do.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imageDirectoryString), // Define the actual file path for finding images
+    RequestPath = "/photos", // Define the endpoint we'll actually use on the pages to access the images. 
+                             // Doing it this way makes the pages not care whether it's running locally, using wwwroot/uploads, or the path we use in Azure.
+    OnPrepareResponse = context =>
+    {
+        context.Context.Response.Headers.XContentTypeOptions = "nosniff"; // Add a security header that tells browsers not to guess the file type, 
+                                                                          // but to respect the declared MIME type. In our case that's "image/<the specific image type>"
+    }
+});
 
 app.UseRouting();
 app.UseAuthentication();
