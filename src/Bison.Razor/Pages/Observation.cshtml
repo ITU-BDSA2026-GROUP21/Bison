@@ -22,6 +22,12 @@
                 }
                 <small>&mdash; @obs.Timestamp</small>
             </p>
+
+            <!--This is for showing the optional photo for an observation.-->
+            @if (!string.IsNullOrEmpty(obs.PicturePath))
+            {
+                <img class="observation-photo" src="@($"/photos/{obs.PicturePath}")" alt="Photo for this observation." />
+            }
         </li>
     </ul>
 

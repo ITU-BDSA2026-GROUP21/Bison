@@ -154,7 +154,7 @@ public class ObservationRepository : IObservationRepository
         return result;
     }
 
-    public async Task<int> MakeObservation(string text, Author author, string? taxonId)
+    public async Task<int> MakeObservation(string text, Author author, string? taxonId, string? photoName = null)
     {
         Taxon? taxon = null;
         if (!string.IsNullOrWhiteSpace(taxonId))
@@ -169,6 +169,7 @@ public class ObservationRepository : IObservationRepository
             Author = author,
             TimeStamp = DateTime.UtcNow,
             Taxon = taxon,
+            PicturePath = photoName
         };
 
         _dbContext.Observations.Add(observation);

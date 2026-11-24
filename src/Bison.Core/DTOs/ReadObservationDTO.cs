@@ -6,4 +6,5 @@ public record ReadObservationDTO
     public required string Timestamp { get; init; }
     public string? DwcTaxonId { get; init; }
     public string? TaxonVernacularName { get; init; }
+    public string? PicturePath { get; init; }
 }

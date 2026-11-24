@@ -7,6 +7,8 @@ using Bison.Core.Models;
 namespace Bison.Razor.Pages;
 
 [Authorize]
+[RequestSizeLimit(11 * 1024 * 1024)]
+[RequestFormLimits(MultipartBodyLengthLimit = 10 * 1024 * 1024)]
 public class PostObservation : PageModel
 {
 
@@ -64,7 +66,27 @@ public class PostObservation : PageModel
         //string? taxonId = Input.TaxonId;
         IFormFile? photo = Input.Photo;
 
-        await _observationService.PostObservation(description, author, taxonId);
+        try // Handle the actual creation of the observation in a try-catch to handle image upload errors more gracefully
+        {
+            // 3. Check if a photo has been uploaded. If yes, call PostObservation with an additional Stream.
+            if (photo != null)
+            {
+                using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
+                await _observationService.PostObservation(description, author, taxonId, photoStream);
+            }
+            else
+            {
+                await _observationService.PostObservation(description, author, taxonId);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError("Input.Photo", ex.Message);
+
+            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
+
+            return Page();
+        }
 
         // 4. Redirect after successful submission
         return Redirect("/obs");
