@@ -41,7 +41,11 @@
             <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file"
                    accept=".png, .jpg, .jpeg, .webp" />
             
-            <span asp-validation-for="Input.Photo" class="error" hidden="true"></span>
+            <br />
+            <div style="margin-bottom: 8px; margin-top: 8px;">
+                <span asp-validation-for="Input.Photo" class="error" style="padding-left: 25%;"></span>
+            </div>
+            <br />
 
             <label style="margin-bottom: 8px; display-block: block;" asp-for="Input.License">License your photo:</label>
             <select style="margin-bottom: 8px; display-block: block;" asp-for="Input.License">
@@ -53,8 +57,12 @@
                 <option value="by-nd">CC BY-ND 4.0 – Attribution-NoDerivatives</option>
                 <option value="by-nc-nd">CC BY-NC-ND 4.0 – Attribution-NonCommercial-NoDerivatives</option>
             </select>
-            <span asp-validation-for="Input.License" class="error" hidden="true"></span>
-                
+            <br />
+            <div style="margin-bottom: 8px; margin-top: 8px;">
+                <span asp-validation-for="Input.License" class="error" style="padding-left: 25%;"></span>
+            </div>
+            <br />
+
             <input type="submit" value="Share">
         </form>
     </div>
