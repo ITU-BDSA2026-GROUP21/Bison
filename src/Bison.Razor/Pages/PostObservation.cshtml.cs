@@ -35,6 +35,7 @@ public class PostObservation : PageModel
         public string Text { get; set; } = "";
         public string? TaxonId { get; set; }
         public IFormFile? Photo { get; set; }
+        public string? License { get; set; }
     }
 
     async public Task OnGetAsync()
@@ -44,6 +45,12 @@ public class PostObservation : PageModel
 
     async public Task<IActionResult> OnPostPostObservation()
     {
+
+        string[] allowed = { "by", "by-sa", "by-nc", "by-nc-sa", "by-nd", "by-nc-nd"};
+        if(Input.Photo != null && !allowed.Contains(Input.License))
+        {
+            ModelState.AddModelError("Input.License", "Choose a license for your photo.");
+        }
 
         // 1. Check that the submitted data is valid
         if (!ModelState.IsValid)
@@ -72,7 +79,7 @@ public class PostObservation : PageModel
             if (photo != null)
             {
                 using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
-                await _observationService.PostObservation(description, author, taxonId, photoStream);
+                await _observationService.PostObservation(description, author, taxonId, photoStream, Input.License);
             }
             else
             {

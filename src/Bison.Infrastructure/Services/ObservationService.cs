@@ -79,7 +79,7 @@ public class ObservationService : IObservationService
         return dtos;
     }
 
-    public async Task<int> PostObservation(string text, Author author, string? taxonId, Stream? photo = null)
+    public async Task<int> PostObservation(string text, Author author, string? taxonId, Stream? photo = null, string? license = null)
     {
         if (photo != null)
         {
@@ -88,7 +88,7 @@ public class ObservationService : IObservationService
 
             try
             {
-                return await _repository.MakeObservation(text, author, taxonId, photoName);
+                return await _repository.MakeObservation(text, author, taxonId, photoName, license);
             }
             catch (Exception) // If the observation failed to be saved by the repository, delete the photo and rethrow the caught exception.
             {

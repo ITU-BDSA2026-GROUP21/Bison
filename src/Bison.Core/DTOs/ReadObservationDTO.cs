@@ -7,4 +7,5 @@ public record ReadObservationDTO
     public string? DwcTaxonId { get; init; }
     public string? TaxonVernacularName { get; init; }
     public string? PicturePath { get; init; }
+    public string? License { get; init; }
 }
