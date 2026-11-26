@@ -14,7 +14,7 @@ public class E2ETest : PageTest
     [Test]
     public async Task PageTitle()
     {
-        await Page.GotoAsync("http://localhost:5273/obs");
+        await Page.GotoAsync($"{BisonFixture.BaseUrl}/obs");
         await Expect(Page).ToHaveTitleAsync(new Regex("Bison"));
 
     }
