@@ -38,7 +38,10 @@
                      })" />
 
             <label style="margin-bottom: 8px; display: block;" asp-for="Input.Photo">Upload photo (optional)</label>
-            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file" />
+            <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file"
+                   accept=".png, .jpg, .jpeg, .webp" />
+            
+            <span asp-validation-for="Input.Photo" class="error"></span>
                 
             <input type="submit" value="Share">
         </form>
