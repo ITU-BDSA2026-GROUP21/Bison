@@ -1,0 +1,2 @@
+namespace Bison.Tests.ApplicationTests;
+

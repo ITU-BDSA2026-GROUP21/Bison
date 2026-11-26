@@ -3,13 +3,14 @@ using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using System.Text.RegularExpressions;
 
-using var playwright = await Playwright.CreateAsync();
-
+namespace Bison.Tests.ApplicationTests.E2E;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
 public class E2ETest : PageTest
 {
+
+
     [Test]
     public async Task PageTitle()
     {
