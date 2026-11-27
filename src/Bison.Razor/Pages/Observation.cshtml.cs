@@ -79,12 +79,19 @@ public class ObservationModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    //BUG/TODO: When posting a proposal without a taxon foreign key exception 
     async public Task<IActionResult> OnPostPostProposal(int id)
     {
         if (!ModelState.IsValid)
         {
             TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
             return RedirectToPage(new { id });
+        }
+
+        //Maybe not necessary
+        if(id == null)
+        {   
+            ModelState.AddModelError("Input.TaxonId", "Choose a taxon for your proposal.");
         }
 
         if (id == null)

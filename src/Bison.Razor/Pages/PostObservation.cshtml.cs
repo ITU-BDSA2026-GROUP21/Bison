@@ -49,8 +49,7 @@ public class PostObservation : PageModel
 
         string[] allowed = { "by", "by-sa", "by-nc", "by-nc-sa", "by-nd", "by-nc-nd"};
         if(Input.Photo != null && !allowed.Contains(Input.License))
-        {
-            
+        {   
             ModelState.AddModelError("Input.License", "Choose a license for your photo.");
         }
 

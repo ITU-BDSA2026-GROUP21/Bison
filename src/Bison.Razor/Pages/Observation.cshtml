@@ -9,38 +9,46 @@
 
 <div>
     <h1> @obs.Username's observation </h1>
-    <ul id="observation" class="observations">
-        <li>
-            <p>
-                <strong>
-                    <a href="/obs/@obs.Username">@obs.Username</a>
-                </strong>
-                @obs.Text
-                @if (obs.TaxonVernacularName != null)
-                {
-                    <small>&mdash; @obs.TaxonVernacularName</small>
-                }
-                <small>&mdash; @obs.Timestamp</small>
-            </p>
-
-            <!--This is for showing the optional photo for an observation.-->
-            @if (!string.IsNullOrEmpty(obs.PicturePath))
-            {
-                <img class="observation-photo" src="@($"/photos/{obs.PicturePath}")" alt="Photo for this observation." />
-            }
-            @if (!string.IsNullOrEmpty(obs.License))
-            {
-                <p>
-                    <small>Photo by @obs.Username, licensed under: © 
-                        <a href="https://creativecommons.org/licenses/@obs.License/4.0/" target="_blank">CC @obs.License
-                            4.0</a>
-                        </small>
-            
+    <div style="display: flex;">
+        <div style="flex: 80%;">
+            <ul id="observation" class="observations">
+                <li>
+                    <p>
+                        <strong>
+                            <a href="/obs/@obs.Username">@obs.Username</a>
+                        </strong>
+                        @obs.Text
+                        @if (obs.TaxonVernacularName != null)
+                        {
+                            <small>&mdash; @obs.TaxonVernacularName</small>
+                        }
+                        <small>&mdash; @obs.Timestamp</small>
                     </p>
-                }
-            </li>
-        </ul>
 
+                    <!--This is for showing the optional photo for an observation.-->
+                    @if (!string.IsNullOrEmpty(obs.PicturePath))
+                    {
+                        <img class="observation-photo" src="@($"/photos/{obs.PicturePath}")"
+                             alt="Photo for this observation." />
+                    }
+                    @if (!string.IsNullOrEmpty(obs.License))
+                    {
+                        <p>
+                            <small>Photo by @obs.Username, licensed under: ©
+                                <a href="https://creativecommons.org/licenses/@obs.License/4.0/" target="_blank">CC
+                                    @obs.License
+                                    4.0</a>
+                                </small>
+            
+                            </p>
+                        }
+                    </li>
+                </ul>
+            </div>
+            <div style="flex: 20%;" class="observations">
+                <p>Upvote button</p>
+            </div>
+        </div>
         <h2> Comments </h2>
         @if (User.Identity.IsAuthenticated)
         {
@@ -89,16 +97,23 @@
         <ul id="proposalList" class="observations">
             @foreach (var pro in Model.Proposals)
             {
-                <li>
-                    <p>
-                        <strong>
-                            <a href="/obs/@pro.Username">@pro.Username</a>
-                        </strong>
-                        @pro.Text
-                        <small>@pro.TaxonName</small>
-                        <small>&mdash; @pro.Timestamp</small>
-                    </p>
-                </li>
+                <div style="display: flex;">
+                    <div style="flex: 80%;">
+                        <li>
+                            <p>
+                                <strong>
+                                    <a href="/obs/@pro.Username">@pro.Username</a>
+                                </strong>
+                                @pro.Text
+                                <small>@pro.TaxonName</small>
+                                <small>&mdash; @pro.Timestamp</small>
+                            </p>
+                        </li>
+                    </div>
+                    <div style="flex: 20%;">
+                        <p>Upvote putton</p>
+                    </div>
+                </div>
             }
         </ul>
 
