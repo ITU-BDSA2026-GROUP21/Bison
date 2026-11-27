@@ -12,6 +12,7 @@ public class ObservationModel : PageModel
     public string? SelectedDwcTaxonId { get; set; }
     public List<TaxonDropdownOption> TaxonDropdownOptions { get; set; } = new();
     private readonly UserManager<Author> _userManager;
+    private readonly Post MostUpvoted;
 
     public ReadObservationDTO? Observation { get; set; }
 
