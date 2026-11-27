@@ -20,5 +20,4 @@ public interface IObservationService
     public Task<bool> RemoveUpvoteFromProposal(Author author, int proposalId);
     public Task<bool> HasAuthorUpvotedObservation(Author author, int observationId);
     public Task<bool> HasAuthorUpvotedProposal(Author author, int proposalId);
-    public Task<Post> GetMostUpvotedPost(int observationId);
 }
