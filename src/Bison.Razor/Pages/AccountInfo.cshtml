@@ -1,4 +1,4 @@
-@page "/AccountInfo"
+@page "/AccountInfo/"
 
 @using Microsoft.AspNetCore.Identity
 @using Bison.Core.Models
@@ -21,6 +21,8 @@
     <h2>Account information</h2>
 
     <h3>Personal information</h3>
+    <p><strong>Name: </strong>@Model.Author.UserName</p>
+    <p><strong>Email: </strong> @Model.Author.Email</p>
 
     @if (Model.Observations.Any())
     {
@@ -47,7 +49,7 @@
     @if (Model.Comments.Any())
     {
         <h3>Your comments</h3>
-        <ul id="commentList" class="comments">
+        <ul id="commentList" class="observations">
             @foreach (var com in Model.Comments)
             {
                 <li>
