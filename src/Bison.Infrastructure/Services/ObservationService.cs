@@ -107,6 +107,18 @@ public class ObservationService : IObservationService
         return dtos;
     }
 
+    public async Task DeleteFullByAuthor(string author)
+    {
+        try
+        {
+            await _repository.DeleteFullByAuthor(author);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
     public async Task<int> PostObservation(string text, Author author, string? taxonId, Stream? photo = null, string? license = null)
     {
         if (photo != null)

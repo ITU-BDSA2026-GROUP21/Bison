@@ -173,6 +173,69 @@ public class ObservationRepository : IObservationRepository
         return result;
     }
 
+    public async Task DeletePartialByAuthor(string author)
+    {
+        //Delete name email
+
+        //Anonymize observations, comments, proposals by author
+        //This can be done either by having a singular uninteractable user for all anonymous posts
+        //Or by deleting the email of aythor, and changing the author username to something random like anon123456
+        //Or make an anonymous user for every single observation/comment/proposal that author has made  
+    }
+    public async Task DeleteFullByAuthor(string author)
+    {
+        await DeleteAuthorComments(author);
+        await DeleteAuthorProposals(author);
+        await DeleteAuthorObservations(author);
+
+
+        //Todo: Delete user email and name and stuff
+
+        //Fix: Delete author comments and delete autor proposals dont work on other peoples observations
+
+    }
+
+    public async Task DeleteAuthorComments(string author)
+    {
+        var query = await _dbContext.Comments
+                                .Where(c => c.Observation.Author.UserName == author)
+                                .ExecuteDeleteAsync();
+    }
+    public async Task DeleteAuthorProposals(string author)
+    {
+        var query = await _dbContext.Proposals
+                            .Where(p => p.Observation.Author.UserName == author)
+                            .ExecuteDeleteAsync();
+    }
+
+    //Delete author observations and all comments/proposals for those observations
+    public async Task DeleteAuthorObservations(string author)
+    {
+        var ids = await _dbContext.Observations
+                        .Where(o => o.Author.UserName == author)
+                        .Select(o => o.PostId)
+                        .ToListAsync();
+
+        if (ids.Count == 0)
+            return;
+
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        await _dbContext.Comments
+            .Where(c => ids.Contains(c.Observation.PostId))
+            .ExecuteDeleteAsync();
+
+        await _dbContext.Proposals
+            .Where(p => ids.Contains(p.Observation.PostId))
+            .ExecuteDeleteAsync();
+
+        await _dbContext.Observations
+            .Where(o => ids.Contains(o.PostId))
+            .ExecuteDeleteAsync();
+
+        await transaction.CommitAsync();
+    }
+
     // Only meant to be used for filtered view!
     public async Task<List<Observation>> GetAllObservations()
     {

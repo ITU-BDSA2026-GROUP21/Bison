@@ -34,4 +34,12 @@ public class AccountInfoModel : PageModel
         Proposals = await _observationService.GetProposalsByAuthor(author, page);
         return Page();
     }
+
+    public async Task<IActionResult> OnPostForgetMe()
+    {
+        Author = await _userManager.GetUserAsync(User);
+        string author = Author.UserName;
+        await _observationService.DeleteFullByAuthor(author);
+        return Redirect("/obs");
+    }
 }
