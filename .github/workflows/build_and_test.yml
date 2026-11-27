@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v6
@@ -38,6 +38,9 @@ jobs:
 
       - name: Build
         run: dotnet build Bison.sln --no-restore
+
+      - name: Install Playwright browsers
+        run: pwsh test/Bison.Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
 
       - name: Test
         run: dotnet test Bison.sln --no-build --verbosity normal

@@ -1,5 +1,7 @@
 using Bison.Core.Models;
 
+namespace Bison.Tests.Unit;
+
 // These tests are for directly testing the Taxon method IsSubTaxon. 
 // Testing this may be redundant, as we already test the filter that's based on this code, 
 // but since our verified dafny code relies on it, it seemed prudent to test it.

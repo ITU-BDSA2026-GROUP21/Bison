@@ -6,12 +6,12 @@ name: Build and deploy ASP.Net Core app to Azure Web App - bdsagroup21bison
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -21,8 +21,8 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
-      
+          dotnet-version: "8.x"
+
       - name: Install Z3
         run: |
           sudo apt update
@@ -39,10 +39,13 @@ jobs:
         run: dotnet dafny translate cs --include-runtime --output src/Bison.Infrastructure/Dafny/Generated/TaxonFilter src/Bison.Infrastructure/Dafny/TaxonFilter.dfy
 
       - name: Build with dotnet
-        run: dotnet build src/Bison.Razor/ --configuration Release
+        run: dotnet build Bison.sln --configuration Release
+
+      - name: Install Playwright browsers
+        run: pwsh test/Bison.Tests/bin/Release/net8.0/playwright.ps1 install --with-deps
 
       - name: Test
-        run: dotnet test Bison.sln --configuration Release
+        run: dotnet test Bison.sln --configuration Release --no-build
 
       - name: dotnet publish
         run: dotnet publish src/Bison.Razor/ -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -65,7 +68,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -77,7 +80,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'bdsagroup21bison'
-          slot-name: 'Production'
+          app-name: "bdsagroup21bison"
+          slot-name: "Production"
           package: .
-          

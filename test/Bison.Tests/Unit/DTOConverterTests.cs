@@ -1,6 +1,8 @@
 using Bison.Core.Models;
 using System.Globalization;
 
+namespace Bison.Tests.Unit;
+
 public class DTOConverterTests
 {
     [Fact]
