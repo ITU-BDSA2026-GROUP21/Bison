@@ -1,4 +1,4 @@
-public interface IAuthorService
-{
-    public Task<AuthorDTO> GetAuthorInformationAsync(string username);
-}
+// public interface IAuthorService
+// {
+//     public Task<AuthorDTO> GetAuthorInformationAsync(string username);
+// }
