@@ -83,7 +83,7 @@ public class DTOConverterTests
         var p1 = new Proposal() { PostId = 21, Author = a1, Observation = o3, Taxon = tEgrettaGarzetta, Text = "Could it be a little egret? Check for yellow feet.", TimeStamp = DateTime.Parse("2023-08-02 08:10:00") };
 
         // Arrange: Create manual DTO to check against
-        var expectedDTO = new ReadProposalDTO { Username = "Roger Histand", Text = "Could it be a little egret? Check for yellow feet.", Timestamp = "08/02/23 8:10:00", DwcTaxonId = "MSTSNM:Arter:ca4d8cf8-f785-ea11-aa77-501ac539d1ea", TaxonName = "Silkehejre" };
+        var expectedDTO = new ReadProposalDTO { Id = 21, Username = "Roger Histand", Text = "Could it be a little egret? Check for yellow feet.", Timestamp = "08/02/23 8:10:00", DwcTaxonId = "MSTSNM:Arter:ca4d8cf8-f785-ea11-aa77-501ac539d1ea", TaxonName = "Silkehejre" };
 
         // Act: Call ToDTO to get actual DTO to test
         var actualDTO = DTOConverter.ToDTO(p1);

@@ -45,9 +45,18 @@
                     </li>
                 </ul>
             </div>
-            <div style="flex: 20%;" class="observations">
-                <p>Upvote</p>
-            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div style="flex: 20%;">
+                    <form method="post" asp-page-handler="UpvoteObservation" asp-route-id="@obs.Id">
+
+                        <button type="submit" style="font-weight: @(Model.HasUpvoted[obs.Id] ? "bold" : "normal")">
+                            Upvote
+                        </button>
+
+                    </form>
+                </div>
+            }
         </div>
         <h2> Comments </h2>
         @if (User.Identity.IsAuthenticated)
@@ -112,20 +121,16 @@
                     </div>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        @if (Model.HasUpvoted[pro.Id])
-                        {
-                            <div style="flex: 20%;">
-                                <strong>
-                                    <button>Upvote</button>
-                                </strong>
-                            </div>
-                        }
-                        else
-                        {
-                            <div style="flex: 20%;">
-                                <button>Upvote</button>
-                            </div>
-                        }
+                        <div style="flex: 20%;">
+                            <form method="post" asp-page-handler="UpvoteProposal" asp-route-id="@obs.Id"
+                                  asp-route-proposalId="@pro.Id">
+
+                                <button type="submit" style="font-weight: @(Model.HasUpvoted[pro.Id] ? "bold" : "normal")">
+                                    Upvote
+                                </button>
+
+                            </form>
+                        </div>
                     }
                 </div>
             }

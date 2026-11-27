@@ -125,54 +125,42 @@ public class ObservationModel : PageModel
         return RedirectToPage(new { id });
     }
 
-    async public Task<IActionResult> OnUpvoteButtonPressObservation(int id)
+    async public Task<IActionResult> OnPostUpvoteObservationAsync(int id)
     {
-        if (!ModelState.IsValid)
-        {
-            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
-            return RedirectToPage(new { id });
-        }
-
-        Author author = await _userManager.GetUserAsync(User);
+        Author? author = await _userManager.GetUserAsync(User);
 
         bool hasUpvoted = await _observationService.HasAuthorUpvotedObservation(author, id);
 
         if (hasUpvoted)
         {
             await _observationService.RemoveUpvoteFromObservation(author, id);
-
-            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
-            return RedirectToPage(new { id });
         }
         else
         {
             await _observationService.AddUpvoteToObservation(author, id);
-
-            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
-            return RedirectToPage(new { id });
         }
+
+        TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
+        return RedirectToPage(new { id });
     }
 
-    async public Task<IActionResult> OnUpvoteButtonPressProposal(int id)
+    async public Task<IActionResult> OnPostUpvoteProposalAsync(int id, int proposalId)
     {
         Author author = await _userManager.GetUserAsync(User);
 
-        bool hasUpvoted = await _observationService.HasAuthorUpvotedProposal(author, id);
+        bool hasUpvoted = await _observationService.HasAuthorUpvotedProposal(author, proposalId);
 
         if (hasUpvoted)
         {
-            await _observationService.RemoveUpvoteFromProposal(author, id);
-
-            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
-            return RedirectToPage(new { id });
+            await _observationService.RemoveUpvoteFromProposal(author, proposalId);
         }
         else
         {
-            await _observationService.AddUpvoteToProposal(author, id);
-
-            TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
-            return RedirectToPage(new { id });
+            await _observationService.AddUpvoteToProposal(author, proposalId);
         }
+
+        TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
+        return RedirectToPage(new { id });
     }
 }
 
