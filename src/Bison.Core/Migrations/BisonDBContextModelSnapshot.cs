@@ -285,6 +285,9 @@ namespace Bison.Core.Migrations
                 {
                     b.HasBaseType("Bison.Core.Models.Post");
 
+                    b.Property<string>("License")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PicturePath")
                         .HasColumnType("TEXT");
 

@@ -8,7 +8,7 @@ public interface IObservationRepository
     public Task<List<Comment>> GetCommentsByObservationID(int observationId, int page);
     public Task<List<Proposal>> GetProposalsByObservationID(int observationId, int page);
     public Task<List<Observation>> GetAllObservations();
-    public Task<int> MakeObservation(string text, Author author, string? taxonId, string? photoName = null);
+    public Task<int> MakeObservation(string text, Author author, string? taxonId, string? photoName = null, string? license = null);
     public Task<int> MakeComment(string text, Author author, int id);
 
     public Task<int> MakeProposal(string text, Author author, int id, string? taxonId);

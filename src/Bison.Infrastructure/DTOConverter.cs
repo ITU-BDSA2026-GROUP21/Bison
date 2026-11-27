@@ -14,7 +14,8 @@ public static class DTOConverter
             Text = o.Text,
             Timestamp = DateTimeToString(o.TimeStamp),
             TaxonVernacularName = o.Taxon.VernacularName,
-            PicturePath = o.PicturePath
+            PicturePath = o.PicturePath,
+            License = o.License
         };
 
         return dto;

@@ -41,8 +41,36 @@
             <input style="margin-bottom: 8px; display: block;" asp-for="Input.Photo" type="file"
                    accept=".png, .jpg, .jpeg, .webp" />
             
-            <span asp-validation-for="Input.Photo" class="error"></span>
-                
+            <div style="margin-bottom: 10px; margin-top: 10px;">
+                @if (ViewData.ModelState.TryGetValue("Input.Photo", out var photoEntry) && photoEntry.Errors.Count > 0)
+                {
+                    <div class="error" role="alert" style="font-weight: bold;">
+                        @photoEntry.Errors[0].ErrorMessage
+                    </div>
+                }
+            </div>
+
+            <label style="margin-bottom: 8px; display-block: block;" asp-for="Input.License">License your photo:</label>
+            <select style="margin-bottom: 8px; display-block: block;" asp-for="Input.License">
+                <option value="">Choose License</option>
+                <option value="by">CC BY 4.0 – Attribution</option>
+                <option value="by-sa">CC BY-SA 4.0 – Attribution-ShareAlike</option>
+                <option value="by-nc">CC BY-NC 4.0 – Attribution-NonCommercial</option>
+                <option value="by-nc-sa">CC BY-NC-SA 4.0 – Attribution-NonCommercial-ShareAlike</option>
+                <option value="by-nd">CC BY-ND 4.0 – Attribution-NoDerivatives</option>
+                <option value="by-nc-nd">CC BY-NC-ND 4.0 – Attribution-NonCommercial-NoDerivatives</option>
+            </select>
+
+            <div style="margin-bottom: 10px; margin-top: 10px;">
+                @if (ViewData.ModelState.TryGetValue("Input.License", out var licenseEntry) && licenseEntry.Errors.Count > 0)
+                {
+                    <div class="error" role="alert" style="font-weight: bold;">
+                        @licenseEntry.Errors[0].ErrorMessage
+                    </div>
+                }
+
+            </div>
+
             <input type="submit" value="Share">
         </form>
     </div>
