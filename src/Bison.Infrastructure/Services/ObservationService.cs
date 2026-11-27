@@ -139,4 +139,32 @@ public class ObservationService : IObservationService
     {
         return await _repository.MakeProposal(text, author, id, taxonId);
     }
+    public async Task<int> GetObservationUpvotes(int observationId)
+    {
+        HashSet<Author> set = await _repository.GetObservationUpVotes(observationId);
+        return set.Count();
+    }
+    public async Task<int> GetProposalUpvotes(int proposalId)
+    {
+        HashSet<Author> set = await _repository.GetProposalUpVotes(proposalId);
+        return set.Count();
+    }
+    public async Task<int> GetMaxProposalUpvotes(int observationId)
+    {
+        Observation obs = await _repository.GetObservationByID(observationId);
+        Proposal max = null;
+        foreach (var proposal in obs.Proposals)
+        {
+            int upvotes = await GetProposalUpvotes(proposal.PostId);
+            if (upvotes > max.UpVoters.Count())
+            {
+                max = proposal;
+            }
+            else if (upvotes == max.UpVoters.Count())
+            {
+                max = proposal.TimeStamp > max.TimeStamp ? proposal : max;
+            }
+        }
+        return max.UpVoters.Count();
+    }
 }
