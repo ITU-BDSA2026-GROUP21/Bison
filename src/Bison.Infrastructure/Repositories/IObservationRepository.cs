@@ -10,8 +10,11 @@ public interface IObservationRepository
     public Task<List<Proposal>> GetProposalsByObservationID(int observationId, int page);
     public Task<List<Proposal>> GetProposalsByAuthor(string author, int page);
     public Task<List<Observation>> GetAllObservations();
+    public Task<HashSet<Author>> GetObservationUpVotes(int observationId);
+    public Task<HashSet<Author>> GetProposalUpVotes(int proposalId);
     public Task<int> MakeObservation(string text, Author author, string? taxonId, string? photoName = null, string? license = null);
     public Task<int> MakeComment(string text, Author author, int id);
-
     public Task<int> MakeProposal(string text, Author author, int id, string? taxonId);
+    public Task<int> AddUpvoteToObservation(Author author, int observationId);
+    public Task<int> AddUpvoteToProposal(Author author, int proposalId);
 }

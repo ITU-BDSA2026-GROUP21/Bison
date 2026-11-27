@@ -85,6 +85,15 @@ public class ObservationRepository : IObservationRepository
         return result;
     }
 
+    public async Task<HashSet<Author>> GetObservationUpVotes(int observationId)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<HashSet<Author>> GetProposalUpVotes(int proposalId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<int> MakeComment(string text, Author author, int id)
     {
 
@@ -210,5 +219,14 @@ public class ObservationRepository : IObservationRepository
 
         return observation.PostId;
 
+    }
+
+    public async Task<int> AddUpvoteToObservation(Author author, int observationId)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<int> AddUpvoteToProposal(Author author, int proposalId)
+    {
+        throw new NotImplementedException();
     }
 }
