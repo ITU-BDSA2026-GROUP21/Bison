@@ -100,8 +100,6 @@ public class Program
         builder.Services.AddScoped<IObservationService, ObservationService>();
         builder.Services.AddScoped<ITaxonRepository, TaxonRepository>();
         builder.Services.AddScoped<ITaxonFilterService, TaxonFilterService>();
-        builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-        builder.Services.AddScoped<IAuthorService, AuthorService>();
         builder.Services.AddScoped<IPhotoService>(sp => new PhotoService(imageDirectoryString)); // Using a lambda function to explicitly tell the service provicer what service to use.
 
         builder.Services.AddDistributedMemoryCache(); // where session data is stored
