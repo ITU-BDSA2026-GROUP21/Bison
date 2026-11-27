@@ -149,7 +149,7 @@ public class ObservationService : IObservationService
         HashSet<Author> set = await _repository.GetProposalUpVotes(proposalId);
         return set.Count();
     }
-    public async Task<int> GetMaxProposalUpvotes(int observationId)
+    public async Task<Post> GetPostWithMaxUpvotes(int observationId)
     {
         Observation obs = await _repository.GetObservationByID(observationId);
         Proposal max = null;
@@ -165,7 +165,11 @@ public class ObservationService : IObservationService
                 max = proposal.TimeStamp > max.TimeStamp ? proposal : max;
             }
         }
-        return max.UpVoters.Count();
+        if (obs.UpVoters.Count() >= max.UpVoters.Count())
+        {
+            return obs;
+        }
+        return max;
     }
     public async Task<bool> AddUpvoteToObservation(Author author, int observationId)
     {
