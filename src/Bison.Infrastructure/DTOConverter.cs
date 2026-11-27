@@ -56,6 +56,17 @@ public static class DTOConverter
         return dto;
     }
 
+    public static AuthorDTO ToDTO(Author a)
+    {
+        AuthorDTO dto = new AuthorDTO
+        {
+            Username = a.UserName,
+            Email = a.Email
+        };
+
+        return dto;
+    }
+
     private static string DateTimeToString(DateTime t)
     {
         return t.ToString(DTFormat, CultureInfo.InvariantCulture);
