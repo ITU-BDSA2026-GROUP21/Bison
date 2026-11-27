@@ -269,6 +269,36 @@ namespace Bison.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ObservationUpvotes", b =>
+                {
+                    b.Property<int>("ObservationPostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpVotersId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ObservationPostId", "UpVotersId");
+
+                    b.HasIndex("UpVotersId");
+
+                    b.ToTable("ObservationUpvotes");
+                });
+
+            modelBuilder.Entity("ProposalUpvotes", b =>
+                {
+                    b.Property<int>("ProposalPostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpVotersId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ProposalPostId", "UpVotersId");
+
+                    b.HasIndex("UpVotersId");
+
+                    b.ToTable("ProposalUpvotes");
+                });
+
             modelBuilder.Entity("Bison.Core.Models.Comment", b =>
                 {
                     b.HasBaseType("Bison.Core.Models.Post");
@@ -392,6 +422,36 @@ namespace Bison.Core.Migrations
                     b.HasOne("Bison.Core.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ObservationUpvotes", b =>
+                {
+                    b.HasOne("Bison.Core.Models.Observation", null)
+                        .WithMany()
+                        .HasForeignKey("ObservationPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bison.Core.Models.Author", null)
+                        .WithMany()
+                        .HasForeignKey("UpVotersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProposalUpvotes", b =>
+                {
+                    b.HasOne("Bison.Core.Models.Proposal", null)
+                        .WithMany()
+                        .HasForeignKey("ProposalPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bison.Core.Models.Author", null)
+                        .WithMany()
+                        .HasForeignKey("UpVotersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -16,4 +16,20 @@ public class BisonDBContext : IdentityDbContext<Author>
     {
 
     }
+
+    // This method makes sure that the UpVoters relationship is many to many, to properly define the relationship.
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Observation>()
+            .HasMany(o => o.UpVoters)
+            .WithMany()
+            .UsingEntity("ObservationUpvotes");
+
+        builder.Entity<Proposal>()
+            .HasMany(p => p.UpVoters)
+            .WithMany()
+            .UsingEntity("ProposalUpvotes");
+    }
 }

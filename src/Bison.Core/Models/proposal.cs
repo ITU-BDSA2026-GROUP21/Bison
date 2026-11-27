@@ -4,4 +4,5 @@ public class Proposal : Post
 {
     public required Observation Observation { get; set; }
     public required Taxon Taxon { get; set; }
+    public HashSet<Author> UpVoters { get; set; } = new HashSet<Author>();
 }

@@ -7,6 +7,7 @@ public class Observation : Post
     public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
     public string? PicturePath { get; set; }
     public string? License { get; set; }
+    public HashSet<Author> UpVoters { get; set; } = new HashSet<Author>();
     public Taxon? GetTaxon()
     {
         return Taxon;
