@@ -46,6 +46,7 @@ public static class DTOConverter
 
         ReadProposalDTO dto = new ReadProposalDTO
         {
+            Id = p.PostId,
             Username = p.Author.UserName,
             Text = p.Text,
             Timestamp = DateTimeToString(p.TimeStamp),
