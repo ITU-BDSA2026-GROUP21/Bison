@@ -1,0 +1,84 @@
+@page "/AccountInfo"
+
+@using Microsoft.AspNetCore.Identity
+@using Bison.Core.Models
+
+@namespace Bison.Razor.Pages
+
+@model Bison.Razor.Pages.AccountInfoModel
+
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
+
+@{
+    ViewData["Title"] = "Bison";
+    Layout = "Shared/_Layout";
+}
+
+@if (User.Identity.IsAuthenticated)
+
+{
+    <h2>Account information</h2>
+
+    <h3>Personal information</h3>
+
+    @if (Model.Observations.Any())
+    {
+        <h3>Your observations</h3>
+        <ul id="observation" class="observations">
+            @foreach (var obs in Model.Observations)
+            {
+                <li>
+                    <p>
+                        <strong>
+                            <a href="/obs/@obs.Username">@obs.Username</a>
+                        </strong>
+                        <a href="/ob/@obs.Id">@obs.Text</a>
+                        @if (obs.TaxonVernacularName != null)
+                        {
+                            <small>&mdash; @obs.TaxonVernacularName</small>
+                        }
+                        <small>&mdash; @obs.Timestamp</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    }
+    @if (Model.Comments.Any())
+    {
+        <h3>Your comments</h3>
+        <ul id="commentList" class="comments">
+            @foreach (var com in Model.Comments)
+            {
+                <li>
+                    <p>
+                        <strong>
+                            <a href="/obs/@com.Username">@com.Username</a>
+                        </strong>
+                        @com.Text
+                        <small>&mdash; @com.Timestamp</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    }
+    @if (Model.Proposals.Any())
+    {
+        <h3>Your proposals</h3>
+        <ul id="proposalList" class="observations">
+            @foreach (var pro in Model.Proposals)
+            {
+                <li>
+                    <p>
+                        <strong>
+                            <a href="/obs/@pro.Username">@pro.Username</a>
+                        </strong>
+                        @pro.Text
+                        <small>@pro.TaxonName</small>
+                        <small>&mdash; @pro.Timestamp</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    }
+}

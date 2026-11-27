@@ -68,6 +68,22 @@ public class ObservationRepository : IObservationRepository
 
         return result;
     }
+    public async Task<List<Comment>> GetCommentsByAuthor(string author, int page)
+    {
+        page = Math.Max(page, 1);
+
+        //If it doesn't work use .Equals();
+        var query = _dbContext.Comments.Include(c => c.Author)
+                               .Where(c => c.Observation.Author.UserName == author)
+                               .OrderByDescending(c => c.TimeStamp)
+                               .ThenByDescending(c => c.PostId)
+                               .Skip((page - 1) * PageSize)
+                               .Take(PageSize);
+
+        var result = await query.ToListAsync();
+
+        return result;
+    }
 
     public async Task<int> MakeComment(string text, Author author, int id)
     {
@@ -135,6 +151,22 @@ public class ObservationRepository : IObservationRepository
                                         .ThenByDescending(p => p.PostId)
                                         .Skip((page - 1) * PageSize)
                                         .Take(PageSize);
+
+        var result = await query.ToListAsync();
+
+        return result;
+    }
+    public async Task<List<Proposal>> GetProposalsByAuthor(string author, int page)
+    {
+        page = Math.Max(page, 1);
+
+        var query = _dbContext.Proposals.Include(p => p.Author)
+                                .Include(p => p.Taxon)
+                                .Where(p => p.Observation.Author.UserName == author)
+                                .OrderByDescending(p => p.TimeStamp)
+                                .ThenByDescending(p => p.PostId)
+                                .Skip((page - 1) * PageSize)
+                                .Take(PageSize);
 
         var result = await query.ToListAsync();
 
