@@ -87,11 +87,35 @@ public class ObservationRepository : IObservationRepository
 
     public async Task<HashSet<Author>> GetObservationUpVotes(int observationId)
     {
-        throw new NotImplementedException();
+        var query = _dbContext.Observations.Include(o => o.UpVoters)
+                                           .Where(o => o.PostId == observationId);
+
+        var result = await query.FirstOrDefaultAsync();
+
+        HashSet<Author>? upVoters = result.UpVoters;
+
+        if (upVoters == null)
+        {
+            throw new ArgumentException("This Observation has no UpVoter Set!");
+        }
+
+        return upVoters;
     }
     public async Task<HashSet<Author>> GetProposalUpVotes(int proposalId)
     {
-        throw new NotImplementedException();
+        var query = _dbContext.Proposals.Include(p => p.UpVoters)
+                                        .Where(p => p.PostId == proposalId);
+
+        var result = await query.FirstOrDefaultAsync();
+
+        HashSet<Author>? upVoters = result.UpVoters;
+
+        if (upVoters == null)
+        {
+            throw new ArgumentException("This Proposal has no UpVoter Set!");
+        }
+
+        return upVoters;
     }
 
     public async Task<int> MakeComment(string text, Author author, int id)
@@ -220,13 +244,36 @@ public class ObservationRepository : IObservationRepository
         return observation.PostId;
 
     }
+    public async Task<bool> AddUpvoteToObservation(Author author, int observationId)
+    {
+        var upVoters = await GetObservationUpVotes(observationId);
 
-    public async Task<int> AddUpvoteToObservation(Author author, int observationId)
-    {
-        throw new NotImplementedException();
+        if (upVoters.Contains(author))
+        {
+            return false;
+        }
+
+        // TODO: Check if this actually works, manually
+        upVoters.Add(author);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
-    public async Task<int> AddUpvoteToProposal(Author author, int proposalId)
+    public async Task<bool> AddUpvoteToProposal(Author author, int proposalId)
     {
-        throw new NotImplementedException();
+        var upVoters = await GetProposalUpVotes(proposalId);
+
+        if (upVoters.Contains(author))
+        {
+            return false;
+        }
+
+        // TODO: Check if this actually works, manually
+        upVoters.Add(author);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 }

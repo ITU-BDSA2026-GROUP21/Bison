@@ -15,6 +15,6 @@ public interface IObservationRepository
     public Task<int> MakeObservation(string text, Author author, string? taxonId, string? photoName = null, string? license = null);
     public Task<int> MakeComment(string text, Author author, int id);
     public Task<int> MakeProposal(string text, Author author, int id, string? taxonId);
-    public Task<int> AddUpvoteToObservation(Author author, int observationId);
-    public Task<int> AddUpvoteToProposal(Author author, int proposalId);
+    public Task<bool> AddUpvoteToObservation(Author author, int observationId);
+    public Task<bool> AddUpvoteToProposal(Author author, int proposalId);
 }
