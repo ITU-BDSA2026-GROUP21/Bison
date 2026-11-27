@@ -41,11 +41,11 @@ public class ObservationModel : PageModel
         TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
         MostUpvoted = await _observationService.GetPostWithMaxUpvotes(id);
         Author author = await _userManager.GetUserAsync(User);
-        bool observationVote = await _observationService.HasAuthorUpvotedObservation(author, Observation.Id);
+        bool observationVote = author != null && await _observationService.HasAuthorUpvotedObservation(author, Observation.Id);
         HasUpvoted.Add(Observation.Id, observationVote);
         foreach (var pro in Proposals)
         {
-            bool proposalVote = await _observationService.HasAuthorUpvotedProposal(author, Observation.Id);
+            bool proposalVote = author != null && await _observationService.HasAuthorUpvotedProposal(author, pro.Id);
             HasUpvoted.Add(pro.Id, proposalVote);
         }
         return Page();
