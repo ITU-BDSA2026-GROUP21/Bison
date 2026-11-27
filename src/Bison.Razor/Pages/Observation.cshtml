@@ -46,7 +46,7 @@
                 </ul>
             </div>
             <div style="flex: 20%;" class="observations">
-                <p>Upvote button</p>
+                <p>Upvote</p>
             </div>
         </div>
         <h2> Comments </h2>
@@ -110,9 +110,20 @@
                             </p>
                         </li>
                     </div>
-                    <div style="flex: 20%;">
-                        <p>Upvote putton</p>
-                    </div>
+                    @if (Model.HasUpvoted[pro.Id])
+                    {
+                        <div style="flex: 20%;">
+                            <strong>
+                                <p>Upvote</p>
+                            </strong>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="flex: 20%;">
+                            <p>Upvote</p>
+                        </div>
+                    }
                 </div>
             }
         </ul>

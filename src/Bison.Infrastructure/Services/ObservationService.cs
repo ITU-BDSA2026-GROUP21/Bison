@@ -152,7 +152,11 @@ public class ObservationService : IObservationService
     public async Task<Post> GetPostWithMaxUpvotes(int observationId)
     {
         Observation obs = await _repository.GetObservationByID(observationId);
-        Proposal max = null;
+        if (obs.Proposals.Count() == 0)
+        {
+            return obs;
+        }
+        Proposal max = obs.Proposals.First();
         foreach (var proposal in obs.Proposals)
         {
             int upvotes = await GetProposalUpvotes(proposal.PostId);

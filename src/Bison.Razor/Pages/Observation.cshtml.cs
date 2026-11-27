@@ -20,6 +20,8 @@ public class ObservationModel : PageModel
 
     public List<ReadProposalDTO> Proposals { get; set; } = new();
 
+    public Dictionary<int, bool> HasUpvoted { get; set; } = new();
+
     public ObservationModel(UserManager<Author> userManager, IObservationService observationService, ITaxonFilterService taxonFilterService)
     {
         _observationService = observationService;
@@ -38,6 +40,14 @@ public class ObservationModel : PageModel
         Proposals = await _observationService.GetProposals(id, page);
         TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
         MostUpvoted = await _observationService.GetPostWithMaxUpvotes(id);
+        Author author = await _userManager.GetUserAsync(User);
+        bool observationVote = await _observationService.HasAuthorUpvotedObservation(author, Observation.Id);
+        HasUpvoted.Add(Observation.Id, observationVote);
+        foreach (var pro in Proposals)
+        {
+            bool proposalVote = await _observationService.HasAuthorUpvotedProposal(author, Observation.Id);
+            HasUpvoted.Add(pro.Id, proposalVote);
+        }
         return Page();
     }
 
@@ -89,8 +99,8 @@ public class ObservationModel : PageModel
         }
 
         //Maybe not necessary
-        if(id == null)
-        {   
+        if (id == null)
+        {
             ModelState.AddModelError("Input.TaxonId", "Choose a taxon for your proposal.");
         }
 
