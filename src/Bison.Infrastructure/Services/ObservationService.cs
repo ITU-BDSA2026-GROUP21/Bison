@@ -64,9 +64,37 @@ public class ObservationService : IObservationService
 
         return dtos;
     }
+    public async Task<List<ReadCommentDTO>> GetCommentsByAuthor(string author, int page)
+    {
+        List<Comment> comments = await _repository.GetCommentsByAuthor(author, page);
+        List<ReadCommentDTO> dtos = new List<ReadCommentDTO>();
+
+        foreach (Comment c in comments)
+        {
+            ReadCommentDTO dto = DTOConverter.ToDTO(c);
+
+            dtos.Add(dto);
+        }
+
+        return dtos;
+    }
     public async Task<List<ReadProposalDTO>> GetProposals(int observationId, int page)
     {
         List<Proposal> proposals = await _repository.GetProposalsByObservationID(observationId, page);
+        List<ReadProposalDTO> dtos = new List<ReadProposalDTO>();
+
+        foreach (Proposal p in proposals)
+        {
+            ReadProposalDTO dto = DTOConverter.ToDTO(p);
+
+            dtos.Add(dto);
+        }
+
+        return dtos;
+    }
+    public async Task<List<ReadProposalDTO>> GetProposalsByAuthor(string author, int page)
+    {
+        List<Proposal> proposals = await _repository.GetProposalsByAuthor(author, page);
         List<ReadProposalDTO> dtos = new List<ReadProposalDTO>();
 
         foreach (Proposal p in proposals)
