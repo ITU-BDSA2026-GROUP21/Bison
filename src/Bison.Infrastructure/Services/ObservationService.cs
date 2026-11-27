@@ -167,4 +167,30 @@ public class ObservationService : IObservationService
         }
         return max.UpVoters.Count();
     }
+    public async Task<bool> AddUpvoteToObservation(Author author, int observationId)
+    {
+        return await _repository.AddUpvoteToObservation(author, observationId);
+    }
+    public async Task<bool> AddUpvoteToProposal(Author author, int proposalId)
+    {
+        return await _repository.AddUpvoteToProposal(author, proposalId);
+    }
+    public async Task<bool> RemoveUpvoteFromObservation(Author author, int observationId)
+    {
+        return await _repository.RemoveUpvoteFromObservation(author, observationId);
+    }
+    public async Task<bool> RemoveUpvoteFromProposal(Author author, int proposalId)
+    {
+        return await _repository.RemoveUpvoteFromProposal(author, proposalId);
+    }
+    public async Task<bool> HasAuthorUpvotedObservation(Author author, int observationId)
+    {
+        var upVoters = await _repository.GetObservationUpVotes(observationId);
+        return upVoters.Contains(author);
+    }
+    public async Task<bool> HasAuthorUpvotedProposal(Author author, int proposalId)
+    {
+        var upVoters = await _repository.GetProposalUpVotes(proposalId);
+        return upVoters.Contains(author);
+    }
 }
