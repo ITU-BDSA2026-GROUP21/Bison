@@ -17,4 +17,6 @@ public interface IObservationRepository
     public Task<int> MakeProposal(string text, Author author, int id, string? taxonId);
     public Task<bool> AddUpvoteToObservation(Author author, int observationId);
     public Task<bool> AddUpvoteToProposal(Author author, int proposalId);
+    public Task<bool> RemoveUpvoteFromObservation(Author author, int observationId);
+    public Task<bool> RemoveUpvoteFromProposal(Author author, int proposalId);
 }

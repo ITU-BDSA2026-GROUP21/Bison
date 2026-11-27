@@ -276,4 +276,37 @@ public class ObservationRepository : IObservationRepository
 
         return true;
     }
+
+    public async Task<bool> RemoveUpvoteFromObservation(Author author, int observationId)
+    {
+        var upVoters = await GetObservationUpVotes(observationId);
+
+        if (!upVoters.Contains(author))
+        {
+            return false;
+        }
+
+        // TODO: Check if this actually works, manually
+        upVoters.Remove(author);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
+    public async Task<bool> RemoveUpvoteFromProposal(Author author, int proposalId)
+    {
+        var upVoters = await GetProposalUpVotes(proposalId);
+
+        if (!upVoters.Contains(author))
+        {
+            return false;
+        }
+
+        // TODO: Check if this actually works, manually
+        upVoters.Remove(author);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
 }
