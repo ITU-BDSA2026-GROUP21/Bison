@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Bison.Core.Models;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Bison.Razor.Pages;
 
@@ -49,6 +50,7 @@ public class PostObservation : PageModel
         string[] allowed = { "by", "by-sa", "by-nc", "by-nc-sa", "by-nd", "by-nc-nd"};
         if(Input.Photo != null && !allowed.Contains(Input.License))
         {
+            
             ModelState.AddModelError("Input.License", "Choose a license for your photo.");
         }
 
@@ -56,6 +58,7 @@ public class PostObservation : PageModel
         if (!ModelState.IsValid)
         {
             TaxonDropdownOptions = await _taxonFilterService.GetTaxonDropdownOptions();
+            //return Redirect("/PostObservation");
             return Page();
         }
 
@@ -77,7 +80,7 @@ public class PostObservation : PageModel
         {
             // 3. Check if a photo has been uploaded. If yes, call PostObservation with an additional Stream.
             if (photo != null)
-            {
+            {  
                 using Stream photoStream = photo.OpenReadStream(); // Using the using keyword to dispose of the stream after we're done using it.
                 await _observationService.PostObservation(description, author, taxonId, photoStream, Input.License);
             }
