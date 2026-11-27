@@ -12,9 +12,7 @@ public class AuthorRepository : IAuthorRepository
     }
     public async Task<Author> GetAuthorByUsernameAsync(string username)
     {
-        var query = _dbContext.Authors.Include(a => a.Email)
-                                      .Include(a => a.UserName)
-                                      .Where(a => a.UserName == username);
+        var query = _dbContext.Authors.Where(a => a.UserName == username);
 
         var result = await query.FirstOrDefaultAsync();
 
