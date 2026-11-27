@@ -46,6 +46,10 @@
             }
         </ul>
     }
+    else
+    {
+        <h3>You haven't made any observations</h3>
+    }
     @if (Model.Comments.Any())
     {
         <h3>Your comments</h3>
@@ -63,6 +67,10 @@
                 </li>
             }
         </ul>
+    }
+    else
+    {
+        <h3>You haven't made any comments</h3>
     }
     @if (Model.Proposals.Any())
     {
@@ -82,5 +90,9 @@
                 </li>
             }
         </ul>
+    }
+    else
+    {
+        <h3>You haven't made any proposals</h3>
     }
 }
