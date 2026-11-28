@@ -149,12 +149,12 @@ public class ObservationService : IObservationService
         HashSet<Author> set = await _repository.GetProposalUpVotes(proposalId);
         return set.Count();
     }
-    public async Task<Post> GetPostWithMaxUpvotes(int observationId)
+    public async Task<MostUpvotedTaxonDTO> GetPostWithMaxUpvotes(int observationId)
     {
         Observation obs = await _repository.GetObservationByID(observationId);
         if (obs.Proposals.Count() == 0)
         {
-            return obs;
+            return DTOConverter.ToUpvotedDTO(obs);
         }
         Proposal max = obs.Proposals.First();
         foreach (var proposal in obs.Proposals)
@@ -171,9 +171,9 @@ public class ObservationService : IObservationService
         }
         if (obs.UpVoters.Count() >= max.UpVoters.Count())
         {
-            return obs;
+            return DTOConverter.ToUpvotedDTO(obs);
         }
-        return max;
+        return DTOConverter.ToUpvotedDTO(max);
     }
     public async Task<bool> AddUpvoteToObservation(Author author, int observationId)
     {

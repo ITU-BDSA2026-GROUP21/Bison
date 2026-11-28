@@ -13,7 +13,7 @@ public interface IObservationService
     public Task<int> PostProposal(string text, Author author, int id, string? taxonId);
     public Task<int> GetObservationUpvotes(int observationId);
     public Task<int> GetProposalUpvotes(int proposalId);
-    public Task<Post> GetPostWithMaxUpvotes(int observationId);
+    public Task<MostUpvotedTaxonDTO> GetPostWithMaxUpvotes(int observationId);
     public Task<bool> AddUpvoteToObservation(Author author, int observationid);
     public Task<bool> AddUpvoteToProposal(Author author, int proposalId);
     public Task<bool> RemoveUpvoteFromObservation(Author author, int observationId);

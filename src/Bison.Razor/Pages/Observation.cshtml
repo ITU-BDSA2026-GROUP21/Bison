@@ -5,6 +5,7 @@
     ViewData["Title"] = "Bison";
     Layout = "Shared/_Layout";
     var obs = Model.Observation!;
+    var mostUpvoted = Model.MostUpvoted!;
 }
 
 <div>
@@ -136,4 +137,24 @@
             }
         </ul>
 
+        <br />
+
+        @if (mostUpvoted != null)
+        {
+            <h2> Community consensus </h2>
+            <ul id="consensusTaxon" class="observations">
+                <li>
+                    This bird has been voted to be a:
+                    <strong>
+                        @mostUpvoted.TaxonName
+                    </strong>
+                    <br />
+                    First suggested by:
+                    <strong>
+                        <a href="/obs/@mostUpvoted.Username">@mostUpvoted.Username</a>
+                    </strong>
+                    <small>&mdash; @obs.Timestamp</small>
+                </li>
+            </ul>
+        }
     </div>

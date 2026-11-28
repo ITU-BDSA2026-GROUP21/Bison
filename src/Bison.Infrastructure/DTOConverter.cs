@@ -57,6 +57,30 @@ public static class DTOConverter
         return dto;
     }
 
+    public static MostUpvotedTaxonDTO ToUpvotedDTO(Observation o)
+    {
+        MostUpvotedTaxonDTO dto = new MostUpvotedTaxonDTO
+        {
+            Username = o.Author.UserName,
+            Timestamp = DateTimeToString(o.TimeStamp),
+            TaxonName = o.Taxon.VernacularName
+        };
+
+        return dto;
+    }
+
+    public static MostUpvotedTaxonDTO ToUpvotedDTO(Proposal p)
+    {
+        MostUpvotedTaxonDTO dto = new MostUpvotedTaxonDTO
+        {
+            Username = p.Author.UserName,
+            Timestamp = DateTimeToString(p.TimeStamp),
+            TaxonName = p.Taxon.VernacularName
+        };
+
+        return dto;
+    }
+
     private static string DateTimeToString(DateTime t)
     {
         return t.ToString(DTFormat, CultureInfo.InvariantCulture);
