@@ -154,7 +154,7 @@ public class ObservationService : IObservationService
         Observation obs = await _repository.GetObservationByID(observationId);
         if (obs.Proposals.Count() == 0)
         {
-            return DTOConverter.ToUpvotedDTO(obs);
+            return DTOConverter.ToUpvotedDTO(obs, obs.UpVoters.Count);
         }
         Proposal max = obs.Proposals.First();
         foreach (var proposal in obs.Proposals)
@@ -171,9 +171,9 @@ public class ObservationService : IObservationService
         }
         if (obs.UpVoters.Count() >= max.UpVoters.Count())
         {
-            return DTOConverter.ToUpvotedDTO(obs);
+            return DTOConverter.ToUpvotedDTO(obs, obs.UpVoters.Count);
         }
-        return DTOConverter.ToUpvotedDTO(max);
+        return DTOConverter.ToUpvotedDTO(max, max.UpVoters.Count);
     }
     public async Task<bool> AddUpvoteToObservation(Author author, int observationId)
     {
